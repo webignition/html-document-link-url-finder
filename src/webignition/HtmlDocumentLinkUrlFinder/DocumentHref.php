@@ -33,8 +33,37 @@ class DocumentHref extends \webignition\HtmlDocumentLinkUrlFinder\Url {
      * @return string
      */
     public function getUrl() {
+        $url = $this->getScheme().'://'.$this->getCredentialsString().$this->getHost();
+        
+        if (!$this->hostEndsWithPathPartSeparator() && !$this->pathStartsWithPathPartSeparator()) {
+            $url .= '/';
+        }
+        
+        
+        $url .= $this->getPath().$this->getQueryString();
+        
+        return $url;
+        
         return $this->getScheme().'://'.$this->getCredentialsString().$this->getHost().$this->getPath().$this->getQueryString();
 
+    }
+    
+    
+    /**
+     *
+     * @return boolean
+     */
+    private function pathStartsWithPathPartSeparator() {
+        return substr($this->getPath(), 0, 1) == self::PATH_PART_SEPARATOR;
+    }
+    
+    
+    /**
+     *
+     * @return boolean
+     */
+    private function hostEndsWithPathPartSeparator() {
+        return substr($this->getHost(), strlen($this->getHost()) - 1) == self::PATH_PART_SEPARATOR;
     }
     
     /**
@@ -73,7 +102,7 @@ class DocumentHref extends \webignition\HtmlDocumentLinkUrlFinder\Url {
      *
      * @return string
      */    
-    public function getPath() {
+    public function getPath() {        
         return (parent::getPath() == '') ? $this->documentUrl->getPath() : parent::getPath();
     }
     

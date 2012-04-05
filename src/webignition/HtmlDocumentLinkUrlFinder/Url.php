@@ -9,6 +9,9 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
  */
 class Url {
     
+    const PATH_PART_SEPARATOR = '/';
+    
+    
     /**
      *
      * @var array
