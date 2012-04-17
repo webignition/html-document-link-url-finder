@@ -12,7 +12,7 @@ This project has external dependencies managed with [composer][1]. Get and insta
     mkdir ~/html-document-link-url-finder && cd ~/html-document-link-url-finder
 
     # Clone repository
-    git clone git@github.com:webignition/absolute-url-deriver.git .
+    git clone git@github.com:webignition/html-document-link-url-finder.git .
 
     # Retrieve/update dependencies
     composer.phar update
