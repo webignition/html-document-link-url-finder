@@ -22,8 +22,8 @@ Usage
 
 ### The "Hello World" example
 
+    ```php
     $sourceUrl = 'http://www.google.co.uk/search?q=Hello+World';
-
 
     echo "Finding link URLs in ".$sourceUrl."\n";
 
@@ -44,6 +44,6 @@ Usage
     }
 
     echo "\n";
-
+    ```
 
 [1]: http://getcomposer.org/
