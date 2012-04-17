@@ -22,28 +22,28 @@ Usage
 
 ### The "Hello World" example
 
-    ```php
-    $sourceUrl = 'http://www.google.co.uk/search?q=Hello+World';
+```php
+$sourceUrl = 'http://www.google.co.uk/search?q=Hello+World';
 
-    echo "Finding link URLs in ".$sourceUrl."\n";
+echo "Finding link URLs in ".$sourceUrl."\n";
 
-    $sourceContent = file_get_contents($sourceUrl);
+$sourceContent = file_get_contents($sourceUrl);
 
-    $finder = new \webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder();
-    $finder->setSourceContent($sourceContent);
-    $finder->setSourceUrl($sourceUrl);
+$finder = new \webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder();
+$finder->setSourceContent($sourceContent);
+$finder->setSourceUrl($sourceUrl);
 
-    $urls = $finder->urls();
+$urls = $finder->urls();
 
-    echo "Found ".count($urls)." urls\n";
+echo "Found ".count($urls)." urls\n";
 
-    if (isset($_GET['verbose'])) {
-        foreach ($urls as $url) {
-            echo $url . "\n";
-        }
+if (isset($_GET['verbose'])) {
+    foreach ($urls as $url) {
+        echo $url . "\n";
     }
+}
 
-    echo "\n";
-    ```
+echo "\n";
+```
 
 [1]: http://getcomposer.org/
