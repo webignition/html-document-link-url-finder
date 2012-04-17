@@ -75,11 +75,11 @@ class HtmlDocumentLinkUrlFinder {
             $anchors = $this->anchors();
             
             for ($anchorIndex = 0; $anchorIndex < $anchors->length; $anchorIndex++) {
-                if ($this->hasHref($anchors->item($anchorIndex))) {                    
-                    $href = new \webignition\HtmlDocumentLinkUrlFinder\DocumentHref(
+                if ($this->hasHref($anchors->item($anchorIndex))) { 
+                    $href = new \webignition\AbsoluteUrlDeriver\AbsoluteUrl(
                         $anchors->item($anchorIndex)->getAttribute('href'),
                         $this->sourceUrl
-                    );                    
+                    );                  
                     
                     $url = $href->getUrl();                                  
                     

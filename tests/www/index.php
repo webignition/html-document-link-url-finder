@@ -3,6 +3,7 @@ ini_set('display_errors', 'On');
 require_once($_SERVER['DOCUMENT_ROOT'].'/../../lib/bootstrap.php');
 
 $sourceUrls = array(
+    'http://www.limegreentangerine.co.uk',
     'http://en.wikipedia.org/wiki/Main_Page',
     'http://www.google.co.uk',
     'http://news.ycombinator.com',

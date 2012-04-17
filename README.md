@@ -3,6 +3,20 @@ HTML Document Link URL Finder
 
 Links in an HTML document might be relative or protocol-less. Get a collection of full absolute URLs for links in an HTML document.
 
+Building
+--------
+
+This project has external dependencies managed with [composer][1]. Get and install this first.
+
+    # Make a suitable project directory
+    mkdir ~/html-document-link-url-finder && cd ~/html-document-link-url-finder
+
+    # Clone repository
+    git clone git@github.com:webignition/absolute-url-deriver.git .
+
+    # Retrieve/update dependencies
+    composer.phar update
+
 Usage
 -----
 
@@ -30,3 +44,6 @@ Usage
     }
 
     echo "\n";
+
+
+[1]: http://getcomposer.org/
