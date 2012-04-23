@@ -91,6 +91,14 @@ class HtmlDocumentLinkUrlFinder {
         $this->urls = null;
     }
     
+    /**
+     * Set the collection of urls to be an empty collection
+     * 
+     */
+    protected function clearUrls() {
+        $this->urls = array();
+    }
+    
     
     /**
      *
