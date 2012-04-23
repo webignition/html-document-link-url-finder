@@ -79,13 +79,9 @@ class HtmlDocumentLinkUrlFinder {
                     $href = new \webignition\AbsoluteUrlDeriver\AbsoluteUrl(
                         $anchors->item($anchorIndex)->getAttribute('href'),
                         $this->sourceUrl
-                    );                  
+                    );
                     
-                    $url = $href->getUrl();                                  
-                    
-                    if (is_string($url) && !in_array($url, $this->urls)) {
-                        $this->urls[] = $url;
-                    }
+                    $this->addUrl($href->getUrl());
                 }
             }
         }
@@ -100,6 +96,18 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function hasUrls() {
         return !is_null($this->urls);
+    }
+    
+
+    /**
+     * Add a single URL to the existing list of URLs found in the HTML document
+     * 
+     * @param string $url 
+     */
+    protected function addUrl($url) {
+        if (is_string($url) && !in_array($url, $this->urls)) {
+            $this->urls[] = $url;
+        }
     }
     
     
