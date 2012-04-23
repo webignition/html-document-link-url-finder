@@ -66,6 +66,15 @@ class HtmlDocumentLinkUrlFinder {
     
     /**
      *
+     * @return string
+     */
+    public function getSourceUrl() {
+        return $this->sourceUrl;
+    }
+    
+    
+    /**
+     *
      * @return array 
      */
     public function urls() {
