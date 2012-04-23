@@ -52,6 +52,7 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function setSourceContent($sourceContent) {
         $this->sourceContent = $sourceContent;
+        $this->reset();
     }
     
     
@@ -61,6 +62,7 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function setSourceUrl($sourceUrl) {
         $this->sourceUrl = $sourceUrl;
+        $this->reset();
     }
     
     
@@ -70,6 +72,23 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function getSourceUrl() {
         return $this->sourceUrl;
+    }
+    
+    
+    /**
+     * Reset to default state
+     *  
+     */
+    protected function reset() {
+        $this->resetUrls();
+    }
+    
+    
+    /**
+     * Forget all URLs found in the current page 
+     */
+    protected function resetUrls() {
+        $this->urls = null;
     }
     
     
