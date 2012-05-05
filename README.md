@@ -1,7 +1,7 @@
 HTML Document Link URL Finder
 =============================
 
-Links in an HTML document might be relative or protocol-less. Get a collection of full absolute URLs for links in an HTML document.
+Get a collection of full absolute URLs for links in an HTML document.
 
 Building
 --------
