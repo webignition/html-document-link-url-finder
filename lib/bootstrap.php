@@ -16,4 +16,6 @@ function autoload( $rootDir ) {
 }
 
 autoload( __DIR__ . '/../src');
+autoload( __DIR__ . '/../tests/phpunit');
+autoload( __DIR__ . '/../vendor/webignition/url/src');
 autoload( __DIR__ . '/../vendor/webignition/absolute-url-deriver/src');

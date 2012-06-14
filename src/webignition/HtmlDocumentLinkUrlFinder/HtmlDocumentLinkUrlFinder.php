@@ -41,7 +41,7 @@ class HtmlDocumentLinkUrlFinder {
     
     /**
      *
-     * @var \DOMNodeList
+     * @var array
      */
     private $urls = null;
     
@@ -105,19 +105,19 @@ class HtmlDocumentLinkUrlFinder {
      * @return array 
      */
     public function urls() {
-        if (!$this->hasUrls()) {
+        if (!$this->hasUrls()) {            
             $this->urls = array();
             
             $anchors = $this->anchors();
             
             for ($anchorIndex = 0; $anchorIndex < $anchors->length; $anchorIndex++) {
-                if ($this->hasHref($anchors->item($anchorIndex))) { 
-                    $href = new \webignition\AbsoluteUrlDeriver\AbsoluteUrl(
+                if ($this->hasHref($anchors->item($anchorIndex))) {                    
+                    $href = new \webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver(
                         $anchors->item($anchorIndex)->getAttribute('href'),
                         $this->sourceUrl
                     );
                     
-                    $this->addUrl($href->getUrl());
+                    $this->addUrl((string)$href->getAbsoluteUrl());
                 }
             }
         }
@@ -140,10 +140,21 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @param string $url 
      */
-    protected function addUrl($url) {
-        if (is_string($url) && !in_array($url, $this->urls)) {
+    protected function addUrl($url) {        
+        if (is_string($url) && !$this->contains($url)) {
             $this->urls[] = $url;
         }
+    }
+    
+    
+    /**
+     *
+     * @param string $url
+     * @return boolean 
+     */
+    private function contains($url) {
+        $normalisedUrl = new \webignition\Url\Url($url);
+        return in_array((string)$normalisedUrl, $this->urls);
     }
     
     
