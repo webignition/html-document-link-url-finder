@@ -13,13 +13,17 @@
     ],
     "require": {
         "php": ">=5.3.0",
-        "webignition/absolute-url-deriver": "*"
-        
+        "webignition/absolute-url-deriver": "*",
+        "webignition/url": "*"        
     },
     "repositories": [
         {
             "type":"vcs",
             "url": "https://github.com/webignition/absolute-url-deriver"
-        }        
+        },
+        {
+            "type":"vcs",
+            "url": "https://github.com/webignition/url"
+        }
     ]
 }
