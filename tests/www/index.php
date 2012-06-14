@@ -1,15 +1,15 @@
 <?php
 ini_set('display_errors', 'On');
+ini_set('max_execution_time', 600);
 require_once($_SERVER['DOCUMENT_ROOT'].'/../../lib/bootstrap.php');
 
 $sourceUrls = array(
-    'http://www.limegreentangerine.co.uk',
+    'http://news.bbc.co.uk/1/hi/help/3681938.stm',
+    'http://www.limegreentangerine.co.uk/branding/',
     'http://en.wikipedia.org/wiki/Main_Page',
     'http://www.google.co.uk',
-    'http://news.ycombinator.com',
     'http://news.bbc.co.uk/',
     'http://reddit.com',
-    'http://news.ycombinator.com/item?id=3720332',
     'http://www.microsoft.com/en-us/default.aspx',
     'http://www.stackoverflow.com/'
 );
