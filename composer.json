@@ -1,29 +1,22 @@
 {
-    "name": "webignition/html-document-link-url-finder",
-    "description": "Look in an HTML document, get ALL the links",
-    "keywords": ["http", "caching", "client"],
-    "homepage": "https://github.com/webignition/html-document-link-url-finder",
+    "name": "webignition/html-validation-error-linkifier",
+    "description": "Translate a normalised HTML validation error message a useful hyperlink url ",
+    "keywords": ["html", "validation", "error", "linkifier"],
+    "homepage": "https://github.com/webignition/html-validation-error-linkifier",
     "type": "library",
-    "license": "WTFPL",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jon Cram",
             "email": "jon@webignition.net"
         }
     ],
+    "autoload": {
+        "psr-0": { "": "src/" }
+    },    
     "require": {
         "php": ">=5.3.0",
         "webignition/absolute-url-deriver": "*",
-        "webignition/url": "*"        
-    },
-    "repositories": [
-        {
-            "type":"vcs",
-            "url": "https://github.com/webignition/absolute-url-deriver"
-        },
-        {
-            "type":"vcs",
-            "url": "https://github.com/webignition/url"
-        }
-    ]
+        "webignition/url": "*"      
+    }      
 }

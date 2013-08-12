@@ -2,6 +2,9 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
+use webignition\NormalisedUrl\NormalisedUrl;
+use webignition\Url\ScopeComparer;
+
 /**
  * Finds links in an HTML Document
  * 
@@ -48,6 +51,63 @@ class HtmlDocumentLinkUrlFinder {
     
     /**
      *
+     * @var string
+     */
+    private $scope = null;
+    
+    
+    /**
+     *
+     * @var \webignition\Url\ScopeComparer
+     */
+    private $scopeComparer = null;
+    
+    
+    
+    /**
+     * 
+     * @param \webignition\Url\ScopeComparer $scopeComparer
+     */
+    public function setScopeComparer(\webignition\Url\ScopeComparer $scopeComparer) {
+        $this->scopeComparer = $scopeComparer;
+    }
+    
+    
+    /**
+     * 
+     * @return \webignition\Url\ScopeComparer
+     */
+    public function getScopeComparer() {
+        if (is_null($this->scopeComparer)) {
+            $this->scopeComparer = new ScopeComparer();
+        }
+        
+        return $this->scopeComparer;
+    }
+    
+    
+    
+    /**
+     * 
+     * @param string $scope
+     */
+    public function setScope($scope) {
+        $this->scope = new NormalisedUrl($scope);
+    }
+    
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getScope() {
+        return $this->scope;
+    }
+    
+    
+    
+    /**
+     *
      * @param string $sourceContent 
      */
     public function setSourceContent($sourceContent) {
@@ -61,7 +121,7 @@ class HtmlDocumentLinkUrlFinder {
      * @param string $sourceUrl 
      */
     public function setSourceUrl($sourceUrl) {
-        $this->sourceUrl = $sourceUrl;
+        $this->sourceUrl = new NormalisedUrl($sourceUrl);
         $this->reset();
     }
     
@@ -104,25 +164,59 @@ class HtmlDocumentLinkUrlFinder {
      *
      * @return array 
      */
-    public function urls() {
+    public function getUrls() {
         if (!$this->hasUrls()) {            
             $this->urls = array();
             
             $anchors = $this->anchors();
             
             for ($anchorIndex = 0; $anchorIndex < $anchors->length; $anchorIndex++) {
-                if ($this->hasHref($anchors->item($anchorIndex))) {                    
-                    $href = new \webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver(
+                if ($this->hasHref($anchors->item($anchorIndex))) {
+                    $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
                         $anchors->item($anchorIndex)->getAttribute('href'),
-                        $this->sourceUrl
-                    );
-                    
-                    $this->addUrl((string)$href->getAbsoluteUrl());
+                        (string)$this->sourceUrl
+                    )->getAbsoluteUrl());
+
+                    if ($this->isUrlInScope($discoveredUrl)) {
+                        $this->addUrl((string)$discoveredUrl);
+                    }
                 }
             }
         }
         
         return $this->urls;       
+    }
+    
+    
+    private function isUrlInScope($discoveredUrl) {
+        if (!$this->hasScope()) {
+            return true;
+        }
+        
+        return $this->getScopeComparer()->isInScope($this->getScope(), $discoveredUrl);
+    }
+    
+    
+    /**
+     * 
+     * @param string $nonAbsoluteUrl
+     * @param string $absoluteUrl
+     * @return \webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver
+     */
+    private function getAbsoluteUrlDeriver($nonAbsoluteUrl, $absoluteUrl) {
+        return new \webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver(
+            $nonAbsoluteUrl,
+            $absoluteUrl
+        );
+    }
+    
+    
+    /**
+     * 
+     * @return boolean
+     */
+    protected function hasScope() {
+        return !is_null($this->getScope());
     }
     
     

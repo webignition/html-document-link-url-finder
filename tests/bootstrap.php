@@ -1,5 +1,8 @@
 <?php
-namespace webignition\HtmlDocumentLinkUrlFinder;
+ini_set('display_errors', 'On');
+ini_set('error_reporting', -1);
+
+require_once  __DIR__ . '/../vendor/autoload.php';
 
 function autoload( $rootDir ) {
     spl_autoload_register(function( $className ) use ( $rootDir ) {        
@@ -15,7 +18,5 @@ function autoload( $rootDir ) {
     });
 }
 
-autoload( __DIR__ . '/../src');
-autoload( __DIR__ . '/../tests/phpunit');
-autoload( __DIR__ . '/../vendor/webignition/url/src');
-autoload( __DIR__ . '/../vendor/webignition/absolute-url-deriver/src');
+autoload( '/usr/share/php' );
+autoload( __DIR__ . '/');
