@@ -66,4 +66,21 @@ class GetUrlsTest extends BaseTest {
         ), $finder->getUrls());  
     }
     
+    
+    public function testMultipleScope() {
+        $fixture = $this->getFixture('example02');
+        $finder = $this->getFinder();
+        $finder->setSourceContent($fixture);
+        $finder->setSourceUrl('http://example.com');
+        
+        $finder->setScope(array(
+            'http://example.com/',
+            'http://www.example.com/'
+        ));        
+        $this->assertEquals(array(
+            'http://example.com/',
+            'http://www.example.com/'
+        ), $finder->getUrls());
+    }    
+    
 }
