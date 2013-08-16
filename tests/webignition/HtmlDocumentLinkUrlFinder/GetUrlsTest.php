@@ -49,4 +49,21 @@ class GetUrlsTest extends BaseTest {
         ), $finder->getUrls());
     }
     
+    public function testSetScopeResetsUrlList() {
+        $fixture = $this->getFixture('example02');
+        $finder = $this->getFinder();
+        $finder->setSourceContent($fixture);
+        $finder->setSourceUrl('http://example.com');
+        
+        $finder->setScope('http://example.com/');        
+        $this->assertEquals(array(
+            'http://example.com/'
+        ), $finder->getUrls());        
+        
+        $finder->setScope('http://www.example.com/');        
+        $this->assertEquals(array(
+            'http://www.example.com/'
+        ), $finder->getUrls());  
+    }
+    
 }

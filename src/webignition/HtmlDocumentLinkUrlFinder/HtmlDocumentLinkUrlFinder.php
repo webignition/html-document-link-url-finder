@@ -93,6 +93,7 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function setScope($scope) {
         $this->scope = new NormalisedUrl($scope);
+        $this->reset();
     }
     
     
