@@ -177,7 +177,7 @@ class HtmlDocumentLinkUrlFinder {
      * @return array 
      */
     public function getUrls() {
-        if (!$this->hasUrls()) {            
+        if (is_null($this->urls)) {            
             $this->urls = array();
             
             $anchors = $this->anchors();
@@ -243,7 +243,7 @@ class HtmlDocumentLinkUrlFinder {
      * @return boolean
      */
     public function hasUrls() {
-        return !is_null($this->urls);
+        return count($this->getUrls()) > 0;
     }
     
 
