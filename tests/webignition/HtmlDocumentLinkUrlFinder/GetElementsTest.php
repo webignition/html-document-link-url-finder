@@ -29,7 +29,7 @@ class GetElementsTest extends BaseTest {
         $finder = $this->getFinder();
         $finder->setSourceContent($this->getFixture('example01'));
         $finder->setSourceUrl('http://blog.example.com');
-        $finder->setScope('http://blog.example.com');
+        $finder->setUrlScope('http://blog.example.com');
         
         $this->assertEquals(array(
             '<a href="relative-path">Relative Path</a>',
@@ -47,7 +47,7 @@ class GetElementsTest extends BaseTest {
         $finder = $this->getFinder();
         $finder->setSourceContent($this->getFixture('example01'));
         $finder->setSourceUrl('http://blog.example.com');
-        $finder->setScope('http://example.com/');
+        $finder->setUrlScope('http://example.com/');
         
         $this->assertEquals(array(
             '<a href="//example.com/protocol-relative-same-host">Protocol Relative Same Host</a>',
@@ -59,12 +59,12 @@ class GetElementsTest extends BaseTest {
         $finder->setSourceContent($this->getFixture('example02'));
         $finder->setSourceUrl('http://example.com');
         
-        $finder->setScope('http://example.com/');        
+        $finder->setUrlScope('http://example.com/');        
         $this->assertEquals(array(
             '<a href="http://example.com/">Example no subdomain</a>'
         ), $finder->getElements());        
         
-        $finder->setScope('http://www.example.com/');        
+        $finder->setUrlScope('http://www.example.com/');        
         $this->assertEquals(array(
             '<a href="http://www.example.com/">Example www subdomain</a>'
         ), $finder->getElements());  
@@ -76,7 +76,7 @@ class GetElementsTest extends BaseTest {
         $finder->setSourceContent($this->getFixture('example02'));
         $finder->setSourceUrl('http://example.com');
         
-        $finder->setScope(array(
+        $finder->setUrlScope(array(
             'http://example.com/',
             'http://www.example.com/'
         ));        

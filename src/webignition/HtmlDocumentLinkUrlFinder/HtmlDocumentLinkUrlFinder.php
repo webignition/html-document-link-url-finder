@@ -99,7 +99,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @param string|array $scope
      */
-    public function setScope($scope) {
+    public function setUrlScope($scope) {
         $this->reset();        
         
         if (is_string($scope)) {
@@ -119,7 +119,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return array
      */
-    public function getScope() {
+    public function getUrlScope() {
         return $this->urlScope;
     }
     
@@ -340,7 +340,7 @@ class HtmlDocumentLinkUrlFinder {
      * @return boolean
      */
     private function hasScope() {
-        return !is_null($this->getScope());
+        return !is_null($this->getUrlScope());
     }
     
     

@@ -28,7 +28,7 @@ class GetUrlsTest extends BaseTest {
         $finder = $this->getFinder();
         $finder->setSourceContent($this->getFixture('example01'));
         $finder->setSourceUrl('http://blog.example.com');
-        $finder->setScope('http://blog.example.com');
+        $finder->setUrlScope('http://blog.example.com');
         
         $this->assertEquals(array(
             'http://blog.example.com/relative-path',
@@ -45,7 +45,7 @@ class GetUrlsTest extends BaseTest {
         $finder = $this->getFinder();
         $finder->setSourceContent($this->getFixture('example01'));
         $finder->setSourceUrl('http://blog.example.com');
-        $finder->setScope('http://example.com/');
+        $finder->setUrlScope('http://example.com/');
         
         $this->assertEquals(array(
             'http://example.com/protocol-relative-same-host',
@@ -57,12 +57,12 @@ class GetUrlsTest extends BaseTest {
         $finder->setSourceContent($this->getFixture('example02'));
         $finder->setSourceUrl('http://example.com');
         
-        $finder->setScope('http://example.com/');        
+        $finder->setUrlScope('http://example.com/');        
         $this->assertEquals(array(
             'http://example.com/'
         ), $finder->getUrls());        
         
-        $finder->setScope('http://www.example.com/');        
+        $finder->setUrlScope('http://www.example.com/');        
         $this->assertEquals(array(
             'http://www.example.com/'
         ), $finder->getUrls());  
@@ -74,7 +74,7 @@ class GetUrlsTest extends BaseTest {
         $finder->setSourceContent($this->getFixture('example02'));
         $finder->setSourceUrl('http://example.com');
         
-        $finder->setScope(array(
+        $finder->setUrlScope(array(
             'http://example.com/',
             'http://www.example.com/'
         ));        
