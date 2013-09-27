@@ -99,9 +99,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @param string|array $scope
      */
-    public function setUrlScope($scope) {
-        $this->reset();        
-        
+    public function setUrlScope($scope) {        
         if (is_string($scope)) {
             $this->urlScope = array(new NormalisedUrl($scope));
         }
@@ -128,9 +126,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @param string|array $context
      */
-    public function setElementScope($scope) {
-        $this->reset();
-        
+    public function setElementScope($scope) {        
         if (is_string($scope)) {
             $this->elementScope = array($scope);
         }
@@ -163,7 +159,7 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function setSourceContent($sourceContent) {
         $this->sourceContent = $sourceContent;
-        $this->reset();
+        $this->elementsWithUrlAttributes = null;
     }
     
     
@@ -173,7 +169,7 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function setSourceUrl($sourceUrl) {
         $this->sourceUrl = new NormalisedUrl($sourceUrl);
-        $this->reset();
+        $this->elementsWithUrlAttributes = null;
     }
     
     
@@ -183,17 +179,6 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function getSourceUrl() {
         return $this->sourceUrl;
-    }
-    
-    
-    /**
-     * Reset to default state
-     *  
-     */
-    private function reset() {
-        $this->elementsWithUrlAttributes = null;
-        $this->urlScope = null;
-        $this->elementScope = null;
     }
     
     
