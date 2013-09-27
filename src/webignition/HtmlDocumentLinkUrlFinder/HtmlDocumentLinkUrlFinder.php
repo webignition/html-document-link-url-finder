@@ -201,10 +201,51 @@ class HtmlDocumentLinkUrlFinder {
      *
      * @return array 
      */
-    public function getUrls() {
+    public function getUrls() {        
+        $urls = array();        
+        $elements = $this->getRawElements();
         
+        foreach ($elements as $element) {            
+            $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
+                $this->getUrlAttributeFromElement($element),
+                (string)$this->sourceUrl
+            )->getAbsoluteUrl()); 
+            
+            if (!in_array((string)$discoveredUrl, $urls)) {
+                $urls[] = (string)$discoveredUrl;
+            }            
+        }
+        
+        return $urls; 
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function getElements() {
+        $elements = array();
+        $rawElements = $this->getRawElements();
+        
+        foreach ($rawElements as $element) {
+            $elementAsString = trim($this->sourceDOM()->saveHtml($element));
+            if (!in_array($elementAsString, $elements)) {
+                $elements[] = $elementAsString;
+            }
+        }
+        
+        return $elements;
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getRawElements() {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
-        $urls = array();
+        $elements = array();
 
         foreach ($elementsWithUrlAttributes as $element) {
             if (!$this->isElementInContext($element)) {
@@ -217,14 +258,12 @@ class HtmlDocumentLinkUrlFinder {
                 (string)$this->sourceUrl
             )->getAbsoluteUrl());
 
-            if ($this->isUrlInScope($discoveredUrl)) {
-                if (!in_array((string)$discoveredUrl, $urls)) {
-                    $urls[] = (string)$discoveredUrl;
-                }
+            if ($this->isUrlInScope($discoveredUrl)) {                
+                $elements[] = $element;
             }            
         }
         
-        return $urls;  
+        return $elements;          
     }
     
     
