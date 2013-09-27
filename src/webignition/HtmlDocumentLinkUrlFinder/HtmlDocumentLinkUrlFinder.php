@@ -12,6 +12,14 @@ use webignition\Url\ScopeComparer;
  *
  */
 class HtmlDocumentLinkUrlFinder {
+    
+    const HREF_ATTRIBUTE_NAME  = 'href';
+    const SRC_ATTRIBUTE_NAME  = 'src';
+    
+    private $urlAttributeNames = array(
+        self::HREF_ATTRIBUTE_NAME, 
+        self::SRC_ATTRIBUTE_NAME
+    );
 
     
     /**
@@ -39,28 +47,28 @@ class HtmlDocumentLinkUrlFinder {
      *
      * @var array
      */
-    private $anchors = null;
+    private $elementsWithUrlAttributes = null;
     
     
     /**
      *
      * @var array
      */
-    private $urls = null;
+    private $urlScope = null;
     
     
     /**
      *
      * @var array
      */
-    private $scope = null;
+    private $elementScope = null;
     
     
     /**
      *
      * @var \webignition\Url\ScopeComparer
      */
-    private $scopeComparer = null;
+    private $urlScopeComparer = null;
     
     
     
@@ -68,8 +76,8 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @param \webignition\Url\ScopeComparer $scopeComparer
      */
-    public function setScopeComparer(\webignition\Url\ScopeComparer $scopeComparer) {
-        $this->scopeComparer = $scopeComparer;
+    public function setUrlScopeComparer(\webignition\Url\ScopeComparer $scopeComparer) {
+        $this->urlScopeComparer = $scopeComparer;
     }
     
     
@@ -77,43 +85,74 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return \webignition\Url\ScopeComparer
      */
-    public function getScopeComparer() {
-        if (is_null($this->scopeComparer)) {
-            $this->scopeComparer = new ScopeComparer();
+    public function getUrlScopeComparer() {
+        if (is_null($this->urlScopeComparer)) {
+            $this->urlScopeComparer = new ScopeComparer();
         }
         
-        return $this->scopeComparer;
+        return $this->urlScopeComparer;
     }
     
     
     
     /**
      * 
-     * @param string $scope
+     * @param string|array $scope
      */
     public function setScope($scope) {
+        $this->reset();        
+        
         if (is_string($scope)) {
-            $this->scope = array(new NormalisedUrl($scope));
+            $this->urlScope = array(new NormalisedUrl($scope));
         }
         
         if (is_array($scope)) {
-            $this->scope = array();
+            $this->urlScope = array();
             foreach ($scope as $url) {
-                $this->scope[] = new NormalisedUrl($url);
+                $this->urlScope[] = new NormalisedUrl($url);
             }                
         }
-        
-        
-        $this->reset();
     }
     
     
     /**
      * 
-     * @return string
+     * @return array
      */
     public function getScope() {
-        return $this->scope;
+        return $this->urlScope;
+    }
+    
+    
+    /**
+     * 
+     * @param string|array $context
+     */
+    public function setElementScope($scope) {
+        $this->reset();
+        
+        if (is_string($scope)) {
+            $this->elementScope = array($scope);
+        }
+        
+        if (is_array($scope)) {
+            $this->elementScope = $scope;                
+        }
+        
+        if (is_array($this->elementScope)) {
+            foreach ($this->elementScope as $index => $nodeName) {
+                $this->elementScope[$index] = strtolower($nodeName);
+            }
+        }
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function getElementScope() {
+        return $this->elementScope;
     }
     
     
@@ -151,24 +190,10 @@ class HtmlDocumentLinkUrlFinder {
      * Reset to default state
      *  
      */
-    protected function reset() {
-        $this->resetUrls();
-    }
-    
-    
-    /**
-     * Forget all URLs found in the current page 
-     */
-    protected function resetUrls() {
-        $this->urls = null;
-    }
-    
-    /**
-     * Set the collection of urls to be an empty collection
-     * 
-     */
-    protected function clearUrls() {
-        $this->urls = array();
+    private function reset() {
+        $this->elementsWithUrlAttributes = null;
+        $this->urlScope = null;
+        $this->elementScope = null;
     }
     
     
@@ -177,41 +202,83 @@ class HtmlDocumentLinkUrlFinder {
      * @return array 
      */
     public function getUrls() {
-        if (is_null($this->urls)) {            
-            $this->urls = array();
-            
-            $anchors = $this->anchors();
-            
-            for ($anchorIndex = 0; $anchorIndex < $anchors->length; $anchorIndex++) {
-                if ($this->hasHref($anchors->item($anchorIndex))) {
-                    $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
-                        $anchors->item($anchorIndex)->getAttribute('href'),
-                        (string)$this->sourceUrl
-                    )->getAbsoluteUrl());
+        
+        $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
+        $urls = array();
 
-                    if ($this->isUrlInScope($discoveredUrl)) {
-                        $this->addUrl((string)$discoveredUrl);
-                    }
-                }
+        foreach ($elementsWithUrlAttributes as $element) {
+            if (!$this->isElementInContext($element)) {
+                continue;
             }
+            
+            $url = $this->getUrlAttributeFromElement($element);            
+            $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
+                $url,
+                (string)$this->sourceUrl
+            )->getAbsoluteUrl());
+
+            if ($this->isUrlInScope($discoveredUrl)) {
+                if (!in_array((string)$discoveredUrl, $urls)) {
+                    $urls[] = (string)$discoveredUrl;
+                }
+            }            
         }
         
-        return $this->urls;       
+        return $urls;  
     }
     
     
-    private function isUrlInScope($discoveredUrl) {
+    /**
+     * 
+     * @param \DOMElement $element
+     * @return string
+     */
+    private function getUrlAttributeFromElement(\DOMElement $element) {
+        foreach ($this->urlAttributeNames as $attributeName) {
+            if ($element->hasAttribute($attributeName)) {
+                return $element->getAttribute($attributeName);
+            }
+        }
+        
+        return null;        
+    }
+    
+    
+    /**
+     * 
+     * @param \webignition\Url\Url $discoveredUrl
+     * @return boolean
+     */
+    private function isUrlInScope(\webignition\Url\Url $discoveredUrl) {
         if (!$this->hasScope()) {
             return true;
         }
         
-        foreach ($this->scope as $scopeUrl) {
-            if ($this->getScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
+        foreach ($this->urlScope as $scopeUrl) {
+            if ($this->getUrlScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
                 return true;
             }
         }
         
         return false;
+    }
+    
+    
+    /**
+     * 
+     * @param \DOMElement $element
+     * @return boolean
+     */
+    private function isElementInContext(\DOMElement $element) {
+        if (!is_array($this->elementScope)) {
+            return true;
+        }
+        
+        if (count($this->elementScope) === 0) {
+            return true;
+        }
+        
+        return in_array($element->nodeName, $this->elementScope);
     }
     
     
@@ -233,7 +300,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return boolean
      */
-    protected function hasScope() {
+    private function hasScope() {
         return !is_null($this->getScope());
     }
     
@@ -244,52 +311,6 @@ class HtmlDocumentLinkUrlFinder {
      */
     public function hasUrls() {
         return count($this->getUrls()) > 0;
-    }
-    
-
-    /**
-     * Add a single URL to the existing list of URLs found in the HTML document
-     * 
-     * @param string $url 
-     */
-    protected function addUrl($url) {        
-        if (is_string($url) && !$this->contains($url)) {
-            $this->urls[] = $url;
-        }
-    }
-    
-    
-    /**
-     *
-     * @param string $url
-     * @return boolean 
-     */
-    private function contains($url) {
-        $normalisedUrl = new \webignition\Url\Url($url);
-        return in_array((string)$normalisedUrl, $this->urls);
-    }
-    
-    
-    /**
-     *
-     * @return \DOMNodeList
-     */
-    private function anchors() {
-        if (is_null($this->anchors)) {
-            $this->anchors = $this->sourceDOM()->getElementsByTagName('a');
-        }
-        
-        return $this->anchors;
-    }
-    
-    
-    /**
-     *
-     * @param \DOMElement $anchor
-     * @return boolean
-     */
-    private function hasHref(\DOMElement $anchor) {
-        return trim($anchor->getAttribute('href')) != '';
     }
     
     
@@ -308,6 +329,66 @@ class HtmlDocumentLinkUrlFinder {
         }
         
         return $this->sourceDOM;
+    }
+    
+    
+    /**
+     * 
+     * @param \DOMElement $element
+     * @return array
+     */
+    private function getElementsWithinElement(\DOMElement $element) {
+        $elements = array();
+        
+        foreach ($element->childNodes as $childNode) {
+            /* @var $childNode \DOMNode */            
+            if ($childNode->nodeType == XML_ELEMENT_NODE) {
+                $elements[] = $childNode;
+                if ($childNode->hasChildNodes()) {                    
+                    $elements = array_merge($elements, $this->getElementsWithinElement($childNode));
+                }
+            }
+            
+        }
+        
+        return $elements;
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    private function getElementsWithUrlAttributes() {
+        if (is_null($this->elementsWithUrlAttributes)) {
+            $this->elementsWithUrlAttributes = array();
+            $elements = $this->getElementsWithinElement($this->sourceDOM()->documentElement);
+
+            foreach ($elements as $element) {
+                /* @var $element \DOMElement */
+                if ($this->hasUrlAttribute($element)) {
+                    $this->elementsWithUrlAttributes[] = $element;
+                }
+            }            
+        }
+        
+        return $this->elementsWithUrlAttributes;
+    }
+    
+    
+    /**
+     * 
+     * @param \DOMElement $element
+     * @return boolean
+     */
+    private function hasUrlAttribute(\DOMElement $element) {
+        foreach ($this->urlAttributeNames as $attributeName) {
+            if ($element->hasAttribute($attributeName)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
         
 
