@@ -228,7 +228,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return array
      */
-    private function getRawElements() {
+    public function getRawElements() {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
         $elements = array();
 
