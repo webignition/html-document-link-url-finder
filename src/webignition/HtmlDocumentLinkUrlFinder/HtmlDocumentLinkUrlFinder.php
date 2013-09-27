@@ -186,7 +186,25 @@ class HtmlDocumentLinkUrlFinder {
      *
      * @return array 
      */
-    public function getUrls() {        
+    public function getUniqueUrls() {        
+        $allUrls = $this->getAllUrls();
+        $urls = array();
+        
+        foreach ($allUrls as $url) {
+            if (!in_array($url, $urls)) {
+                $urls[] = $url;
+            }
+        }
+        
+        return $urls;
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function getAllUrls() {
         $urls = array();        
         $elements = $this->getRawElements();
         
@@ -194,14 +212,33 @@ class HtmlDocumentLinkUrlFinder {
             $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
                 $this->getUrlAttributeFromElement($element),
                 (string)$this->sourceUrl
-            )->getAbsoluteUrl()); 
+            )->getAbsoluteUrl());
             
-            if (!in_array((string)$discoveredUrl, $urls)) {
-                $urls[] = (string)$discoveredUrl;
-            }            
+            $urls[] = (string)$discoveredUrl;         
         }
         
-        return $urls; 
+        return $urls;         
+    }
+    
+    
+    /**
+     * 
+     * @return array
+     */
+    public function getAll() {
+        $urls = $this->getAllUrls();
+        $elements = $this->getElements();
+        
+        $result = array();
+        
+        foreach ($urls as $index => $url) {
+            $result[] = array(
+                'url' => $url,
+                'element' => $elements[$index]
+            );
+        }
+        
+        return $result;
     }
     
     
@@ -228,7 +265,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return array
      */
-    public function getRawElements() {
+    private function getRawElements() {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
         $elements = array();
 
@@ -334,7 +371,7 @@ class HtmlDocumentLinkUrlFinder {
      * @return boolean
      */
     public function hasUrls() {
-        return count($this->getUrls()) > 0;
+        return count($this->getUniqueUrls()) > 0;
     }
     
     

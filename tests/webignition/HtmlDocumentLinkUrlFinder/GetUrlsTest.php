@@ -21,7 +21,7 @@ class GetUrlsTest extends BaseTest {
             'http://blog.example.com/images/blog.png',
             'http://twitter.com/example',
             'http://blog.example.com/images/twitter.png',
-        ), $finder->getUrls());
+        ), $finder->getUniqueUrls());
     } 
     
     public function testGetScopedToBlogExampleCom() {
@@ -38,7 +38,7 @@ class GetUrlsTest extends BaseTest {
             'http://blog.example.com/',
             'http://blog.example.com/images/blog.png',
             'http://blog.example.com/images/twitter.png',
-        ), $finder->getUrls());
+        ), $finder->getUniqueUrls());
     }    
     
     public function testGetScopedToExampleCom() {        
@@ -49,7 +49,7 @@ class GetUrlsTest extends BaseTest {
         
         $this->assertEquals(array(
             'http://example.com/protocol-relative-same-host',
-        ), $finder->getUrls());
+        ), $finder->getUniqueUrls());
     }
     
     public function testSetScopeResetsUrlList() {
@@ -60,12 +60,12 @@ class GetUrlsTest extends BaseTest {
         $finder->setUrlScope('http://example.com/');        
         $this->assertEquals(array(
             'http://example.com/'
-        ), $finder->getUrls());        
+        ), $finder->getUniqueUrls());        
         
         $finder->setUrlScope('http://www.example.com/');        
         $this->assertEquals(array(
             'http://www.example.com/'
-        ), $finder->getUrls());  
+        ), $finder->getUniqueUrls());  
     }
     
     
@@ -81,7 +81,7 @@ class GetUrlsTest extends BaseTest {
         $this->assertEquals(array(
             'http://example.com/',
             'http://www.example.com/'
-        ), $finder->getUrls());
+        ), $finder->getUniqueUrls());
     }
     
     
@@ -107,7 +107,7 @@ class GetUrlsTest extends BaseTest {
             'http://example.com/images/blog.png',
             'http://twitter.com/example',
             'http://example.com/images/twitter.png'
-        ), $finder->getUrls());        
+        ), $finder->getUniqueUrls());        
     }
     
     public function testGetByContextA() {
@@ -125,7 +125,7 @@ class GetUrlsTest extends BaseTest {
             'http://www.youtube.com/example',
             'http://blog.example.com/',
             'http://twitter.com/example',
-        ), $finder->getUrls());         
+        ), $finder->getUniqueUrls());         
     }
     
     public function testGetByContextLink() {
@@ -138,7 +138,7 @@ class GetUrlsTest extends BaseTest {
             'http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.1/css/bootstrap.no-icons.min.css',
             'http://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css',
             'http://example.com/assets/css/main.css',
-        ), $finder->getUrls());         
+        ), $finder->getUniqueUrls());         
     }    
     
     public function testGetByContextScript() {
@@ -150,7 +150,7 @@ class GetUrlsTest extends BaseTest {
         $this->assertEquals(array(
             'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
             'http://example.com/vendor/twitter-bootstrap/bootstrap/js/bootstrap.js',
-        ), $finder->getUrls());
+        ), $finder->getUniqueUrls());
     }
     
 }
