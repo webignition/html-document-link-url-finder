@@ -61,4 +61,13 @@ class GetAllTest extends BaseTest {
         ), $finder->getAll());
     }   
     
+    
+    public function testFixUndefinedOffsetMappingUrlToElement() {        
+        $finder = $this->getFinder();
+        $finder->setSourceContent($this->getFixture('example05'));
+        $finder->setSourceUrl('http://blog.simplytestable.com');
+
+        $this->assertEquals(count($finder->getAllUrls()), count($finder->getElements()));
+    }
+    
 }

@@ -251,10 +251,7 @@ class HtmlDocumentLinkUrlFinder {
         $rawElements = $this->getRawElements();
         
         foreach ($rawElements as $element) {
-            $elementAsString = trim($this->sourceDOM()->saveHtml($element));
-            if (!in_array($elementAsString, $elements)) {
-                $elements[] = $elementAsString;
-            }
+            $elements[] = trim($this->sourceDOM()->saveHtml($element));
         }
         
         return $elements;
