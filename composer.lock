@@ -3,20 +3,20 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "d71b413276586f986a3b2569813ac6b5",
+    "hash": "7658fd586b4a5cf84c231dc1838f6dcb",
     "packages": [
         {
             "name": "webignition/absolute-url-deriver",
-            "version": "1.3.4",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/absolute-url-deriver.git",
-                "reference": "1.3.4"
+                "reference": "a2993cffcde8f2e5a4449204c8284063fb56c87e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/1.3.4",
-                "reference": "1.3.4",
+                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/a2993cffcde8f2e5a4449204c8284063fb56c87e",
+                "reference": "a2993cffcde8f2e5a4449204c8284063fb56c87e",
                 "shasum": ""
             },
             "require": {
@@ -45,20 +45,20 @@
                 "absolute",
                 "url"
             ],
-            "time": "2013-07-09 14:07:36"
+            "time": "2013-10-01 18:05:41"
         },
         {
             "name": "webignition/url",
-            "version": "1.8.2",
+            "version": "1.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "1.8.2"
+                "reference": "1b2f059b2b5a3fc8427596eea5453245e3df338b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/1.8.2",
-                "reference": "1.8.2",
+                "url": "https://api.github.com/repos/webignition/url/zipball/1b2f059b2b5a3fc8427596eea5453245e3df338b",
+                "reference": "1b2f059b2b5a3fc8427596eea5453245e3df338b",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2013-08-15 10:51:12"
+            "time": "2013-09-13 10:21:21"
         }
     ],
     "packages-dev": [
