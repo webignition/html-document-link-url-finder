@@ -3,25 +3,25 @@
         "This file locks the dependencies of your project to a known state",
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file"
     ],
-    "hash": "7658fd586b4a5cf84c231dc1838f6dcb",
+    "hash": "41872174c9693662f949810aae5a20f3",
     "packages": [
         {
             "name": "webignition/absolute-url-deriver",
-            "version": "1.3.6",
+            "version": "1.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/absolute-url-deriver.git",
-                "reference": "a2993cffcde8f2e5a4449204c8284063fb56c87e"
+                "reference": "3212e24d98a2ced54d245f71e11c59b5e47ea9b6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/a2993cffcde8f2e5a4449204c8284063fb56c87e",
-                "reference": "a2993cffcde8f2e5a4449204c8284063fb56c87e",
+                "url": "https://api.github.com/repos/webignition/absolute-url-deriver/zipball/3212e24d98a2ced54d245f71e11c59b5e47ea9b6",
+                "reference": "3212e24d98a2ced54d245f71e11c59b5e47ea9b6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0",
-                "webignition/url": ">=1.7.2"
+                "webignition/url": ">=1.9.3"
             },
             "type": "library",
             "autoload": {
@@ -45,20 +45,20 @@
                 "absolute",
                 "url"
             ],
-            "time": "2013-10-01 18:05:41"
+            "time": "2013-10-03 11:28:29"
         },
         {
             "name": "webignition/url",
-            "version": "1.9.1",
+            "version": "1.9.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "1b2f059b2b5a3fc8427596eea5453245e3df338b"
+                "reference": "c93cae6c5d5fc8fe4834877a697bc9764c365045"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/1b2f059b2b5a3fc8427596eea5453245e3df338b",
-                "reference": "1b2f059b2b5a3fc8427596eea5453245e3df338b",
+                "url": "https://api.github.com/repos/webignition/url/zipball/c93cae6c5d5fc8fe4834877a697bc9764c365045",
+                "reference": "c93cae6c5d5fc8fe4834877a697bc9764c365045",
                 "shasum": ""
             },
             "require": {
@@ -86,7 +86,7 @@
             "keywords": [
                 "url"
             ],
-            "time": "2013-09-13 10:21:21"
+            "time": "2013-10-03 10:01:18"
         }
     ],
     "packages-dev": [
