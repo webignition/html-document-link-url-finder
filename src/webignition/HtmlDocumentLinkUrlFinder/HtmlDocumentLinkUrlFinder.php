@@ -77,6 +77,11 @@ class HtmlDocumentLinkUrlFinder {
     private $urlScopeComparer = null;
     
     
+    /**
+     *
+     * @var string
+     */
+    private $baseUrl = null;
     
     /**
      * 
@@ -217,7 +222,7 @@ class HtmlDocumentLinkUrlFinder {
         foreach ($elements as $element) {            
             $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
                 $this->getUrlAttributeFromElement($element),
-                (string)$this->sourceUrl
+                $this->getBaseUrl()
             )->getAbsoluteUrl());
             
             $urls[] = (string)$discoveredUrl;         
@@ -463,6 +468,40 @@ class HtmlDocumentLinkUrlFinder {
         }
         
         return false;
+    }
+    
+    
+    
+    private function getBaseUrl() {
+        if (is_null($this->baseUrl)) {
+            $baseElement = $this->getBaseElement();
+            if (is_null($baseElement)) {
+                $this->baseUrl = (string)$this->sourceUrl;
+            } else {
+                $this->baseUrl = $baseElement->getAttribute('href');
+            }    
+        }
+        
+        return $this->baseUrl;
+    }
+    
+   
+    /**
+     * 
+     * @return \DOMElement|null
+     */
+    private function getBaseElement() {
+        $baseElements = $this->sourceDOM()->getElementsByTagName('base');
+        if ($baseElements->length !== 1) {
+            return null;
+        }
+        
+        $baseElement = $baseElements->item(0);        
+        if (!$baseElement->hasAttribute('href')) {
+            return null;
+        }
+        
+        return $baseElement;       
     }
         
 

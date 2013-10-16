@@ -2,12 +2,26 @@
 <html lang="en" xml:lang="en">
     <head>
         <title>Example</title>
+        <base href="http://base.example.com/foobar/" />
     </head>
     <body>
+        <!-- 
+        base element affects relative URLs (those without a scheme and not starting with a /)
+        
+        will result in the equivalent of:
+        <li><a href="http://base.example.com/foobar/foo/bar.html">A</a></li>
+        <li><a href="http://base.example.com/foobar/foo/bar.html">B</a></li>
+        <li><a href="http://base.example.com/foo/bar.html">C</a></li>
+        <li><a href="http://base.example.com/foo/bar.html">D</a></li>        
+        <li><a href="http://base.example.com/foobar/#identity">E</a></li>
+        -->
+        
         <ul>
             <li><a href="foo/bar.html">A</a></li>
             <li><a href="./foo/bar.html">B</a></li>
-            <li><a href="/foo/bar.html">C</a></li>
+            <li><a href="../foo/bar.html">C</a></li>
+            <li><a href="/foo/bar.html">D</a></li>
+            <li><a href="#identity">E</a></li>
         </ul>
     </body>
 </html>
