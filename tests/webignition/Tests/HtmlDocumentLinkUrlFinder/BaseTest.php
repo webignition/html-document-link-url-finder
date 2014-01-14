@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\HtmlDocumentLinkUrlFinder\Tests;
+namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 
@@ -13,7 +13,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
      * @return string
      */
     protected function getFixture($name) {
-        return file_get_contents(__DIR__ . '/../../fixtures/' . $name . '.html');
+        return file_get_contents(__DIR__ . '/../../../fixtures/' . $name . '.html');
     }
     
     

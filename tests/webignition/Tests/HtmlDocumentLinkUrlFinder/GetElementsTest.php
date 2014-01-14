@@ -1,6 +1,6 @@
 <?php
 
-namespace webignition\HtmlDocumentLinkUrlFinder\Tests;
+namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 class GetElementsTest extends BaseTest {    
     

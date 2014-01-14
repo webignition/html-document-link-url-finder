@@ -1,6 +1,8 @@
 <?php
 
-namespace webignition\HtmlDocumentLinkUrlFinder\Tests;
+namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
+
+use webignition\Tests\HtmlDocumentLinkUrlFinder\BaseTest;
 
 class ResolveBaseElementTest extends BaseTest {    
     
