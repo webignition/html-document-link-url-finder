@@ -215,7 +215,7 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return array
      */
-    public function getAllUrls() {
+    public function getAllUrls() {        
         $urls = array();        
         $elements = $this->getRawElements();
         
@@ -478,7 +478,12 @@ class HtmlDocumentLinkUrlFinder {
             if (is_null($baseElement)) {
                 $this->baseUrl = (string)$this->sourceUrl;
             } else {
-                $this->baseUrl = $baseElement->getAttribute('href');
+                $absoluteUrlDeriver = new \webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver(
+                    $baseElement->getAttribute('href'),
+                    (string)$this->sourceUrl                        
+                );
+                
+                $this->baseUrl = (string)$absoluteUrlDeriver->getAbsoluteUrl();
             }    
         }
         

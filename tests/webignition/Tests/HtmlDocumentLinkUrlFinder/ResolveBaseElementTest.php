@@ -32,9 +32,23 @@ class ResolveBaseElementTest extends BaseTest {
                 'url' => 'http://base.example.com/foobar/#identity',
                 'element' => '<a href="#identity">E</a>'                
             )            
-        ), $finder->getAll());      
+        ), $finder->getAll()); 
+    }
+    
+    
+    public function testRelativeBaseUrl() {
+        $finder = $this->getFinder();
+        $finder->setSourceContent($this->getFixture('example08'));
+        $finder->setSourceUrl('http://example.com/register/foo.php');
         
-        
+        $this->assertEquals(array(
+            'http://example.com/',
+            'http://example.com/one.html',
+            'http://example.com/two',
+            'http://example.com/foo/bar.html',
+            'http://example.com/foo/bar.html'
+            
+        ), $finder->getAllUrls());
     }
     
 }
