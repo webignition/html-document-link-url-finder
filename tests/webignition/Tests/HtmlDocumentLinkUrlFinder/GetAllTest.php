@@ -69,5 +69,15 @@ class GetAllTest extends BaseTest {
 
         $this->assertEquals(count($finder->getAllUrls()), count($finder->getElements()));
     }
+
+
+    public function testWithEmptyContent() {
+        $finder = $this->getFinder();
+        $finder->setSourceContent("");
+        $finder->setSourceUrl('http://example.com');
+
+        $this->assertEquals([], $finder->getAll());
+        $this->assertEquals([], $finder->getAllUrls());
+    }
     
 }

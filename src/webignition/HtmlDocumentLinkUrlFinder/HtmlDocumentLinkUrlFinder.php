@@ -215,7 +215,11 @@ class HtmlDocumentLinkUrlFinder {
      * 
      * @return array
      */
-    public function getAllUrls() {        
+    public function getAllUrls() {
+        if (!$this->hasSourceContent()) {
+            return [];
+        }
+
         $urls = array();        
         $elements = $this->getRawElements();
         
@@ -237,6 +241,10 @@ class HtmlDocumentLinkUrlFinder {
      * @return array
      */
     public function getAll() {
+        if (!$this->hasSourceContent()) {
+            return [];
+        }
+
         $urls = $this->getAllUrls();
         $elements = $this->getElements();
         
@@ -251,6 +259,14 @@ class HtmlDocumentLinkUrlFinder {
         
         return $result;
     }
+
+
+    /**
+     * @return bool
+     */
+    private function hasSourceContent() {
+        return trim($this->sourceContent) != '';
+    }
     
     
     /**
@@ -258,6 +274,10 @@ class HtmlDocumentLinkUrlFinder {
      * @return array
      */
     public function getElements() {
+        if (!$this->hasSourceContent()) {
+            return [];
+        }
+
         $elements = array();
         $rawElements = $this->getRawElements();
         

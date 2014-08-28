@@ -156,5 +156,13 @@ class GetElementsTest extends BaseTest {
             '<script type="text/javascript" src="/vendor/twitter-bootstrap/bootstrap/js/bootstrap.js"></script>'
         ), $finder->getElements());
     }
+
+    public function testWithEmptyContent() {
+        $finder = $this->getFinder();
+        $finder->setSourceContent("");
+        $finder->setSourceUrl('http://example.com');
+
+        $this->assertEquals([], $finder->getElements());
+    }
     
 }
