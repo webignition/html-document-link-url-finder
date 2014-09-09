@@ -4,7 +4,30 @@ namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase {    
+abstract class BaseTest extends \PHPUnit_Framework_TestCase {
+
+    /**
+     * @var HtmlDocumentLinkUrlFinder
+     */
+    private $finder;
+
+    /**
+     * @return string
+     */
+    abstract protected function getFixtureName();
+
+
+    /**
+     * @return string
+     */
+    abstract protected function getSourceUrl();
+
+
+    public function setUp() {
+        $this->finder = new HtmlDocumentLinkUrlFinder();
+        $this->finder->getConfiguration()->setSourceContent($this->getFixture($this->getFixtureName()));
+        $this->finder->setSourceUrl($this->getSourceUrl());
+    }
     
     
     /**
@@ -18,11 +41,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
     
     
     /**
-     * 
+     *
      * @return \webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder
      */
     protected function getFinder() {
-        return new HtmlDocumentLinkUrlFinder();
-    }      
+        return $this->finder;
+    }
     
 }

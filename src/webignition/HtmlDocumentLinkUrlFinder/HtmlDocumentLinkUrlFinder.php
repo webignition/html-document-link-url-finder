@@ -33,13 +33,6 @@ class HtmlDocumentLinkUrlFinder {
      *
      * @var string
      */
-    private $sourceContent = null;
-    
-    
-    /**
-     *
-     * @var string
-     */
     private $sourceUrl = null;
     
     
@@ -55,21 +48,7 @@ class HtmlDocumentLinkUrlFinder {
      * @var array
      */
     private $elementsWithUrlAttributes = null;
-    
-    
-    /**
-     *
-     * @var array
-     */
-    private $urlScope = null;
-    
-    
-    /**
-     *
-     * @var array
-     */
-    private $elementScope = null;
-    
+
     
     /**
      *
@@ -123,76 +102,7 @@ class HtmlDocumentLinkUrlFinder {
         
         return $this->urlScopeComparer;
     }
-    
-    
-    
-    /**
-     * 
-     * @param string|array $scope
-     */
-    public function setUrlScope($scope) {        
-        if (is_string($scope)) {
-            $this->urlScope = array(new NormalisedUrl($scope));
-        }
-        
-        if (is_array($scope)) {
-            $this->urlScope = array();
-            foreach ($scope as $url) {
-                $this->urlScope[] = new NormalisedUrl($url);
-            }                
-        }
-    }
-    
-    
-    /**
-     * 
-     * @return array
-     */
-    public function getUrlScope() {
-        return $this->urlScope;
-    }
-    
-    
-    /**
-     * 
-     * @param string|array $context
-     */
-    public function setElementScope($scope) {        
-        if (is_string($scope)) {
-            $this->elementScope = array($scope);
-        }
-        
-        if (is_array($scope)) {
-            $this->elementScope = $scope;                
-        }
-        
-        if (is_array($this->elementScope)) {
-            foreach ($this->elementScope as $index => $nodeName) {
-                $this->elementScope[$index] = strtolower($nodeName);
-            }
-        }
-    }
-    
-    
-    /**
-     * 
-     * @return array
-     */
-    public function getElementScope() {
-        return $this->elementScope;
-    }
-    
-    
-    
-    /**
-     *
-     * @param string $sourceContent 
-     */
-    public function setSourceContent($sourceContent) {
-        $this->sourceContent = $sourceContent;
-        $this->elementsWithUrlAttributes = null;
-    }
-    
+
     
     /**
      *
@@ -256,7 +166,7 @@ class HtmlDocumentLinkUrlFinder {
      * @return array
      */
     public function getAllUrls() {
-        if (!$this->hasSourceContent()) {
+        if (!$this->getConfiguration()->hasSourceContent()) {
             return [];
         }
 
@@ -281,7 +191,7 @@ class HtmlDocumentLinkUrlFinder {
      * @return array
      */
     public function getAll() {
-        if (!$this->hasSourceContent()) {
+        if (!$this->getConfiguration()->hasSourceContent()) {
             return [];
         }
 
@@ -300,21 +210,13 @@ class HtmlDocumentLinkUrlFinder {
         return $result;
     }
 
-
-    /**
-     * @return bool
-     */
-    private function hasSourceContent() {
-        return trim($this->sourceContent) != '';
-    }
-    
     
     /**
      * 
      * @return array
      */
     public function getElements() {
-        if (!$this->hasSourceContent()) {
+        if (!$this->getConfiguration()->hasSourceContent()) {
             return [];
         }
 
@@ -379,11 +281,11 @@ class HtmlDocumentLinkUrlFinder {
      * @return boolean
      */
     private function isUrlInScope(\webignition\Url\Url $discoveredUrl) {
-        if (!$this->hasScope()) {
+        if (!$this->getConfiguration()->hasUrlScope()) {
             return true;
         }
         
-        foreach ($this->urlScope as $scopeUrl) {
+        foreach ($this->getConfiguration()->getUrlScope() as $scopeUrl) {
             if ($this->getUrlScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
                 return true;
             }
@@ -399,15 +301,15 @@ class HtmlDocumentLinkUrlFinder {
      * @return boolean
      */
     private function isElementInContext(\DOMElement $element) {
-        if (!is_array($this->elementScope)) {
+        if (!is_array($this->getConfiguration()->getElementScope())) {
             return true;
         }
         
-        if (count($this->elementScope) === 0) {
+        if (count($this->getConfiguration()->getElementScope()) === 0) {
             return true;
         }
         
-        return in_array($element->nodeName, $this->elementScope);
+        return in_array($element->nodeName, $this->getConfiguration()->getElementScope());
     }
     
     
@@ -422,15 +324,6 @@ class HtmlDocumentLinkUrlFinder {
             $nonAbsoluteUrl,
             $absoluteUrl
         );
-    }
-    
-    
-    /**
-     * 
-     * @return boolean
-     */
-    private function hasScope() {
-        return !is_null($this->getUrlScope());
     }
     
     
@@ -454,7 +347,7 @@ class HtmlDocumentLinkUrlFinder {
             $this->sourceDOM->strictErrorChecking = false;            
             $this->sourceDOM->validateOnParse = false;
             
-            @$this->sourceDOM->loadHTML($this->sourceContent);
+            @$this->sourceDOM->loadHTML($this->getConfiguration()->getSourceContent());
         }
         
         return $this->sourceDOM;
