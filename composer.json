@@ -21,5 +21,8 @@
         "php": ">=5.4.0",
         "webignition/absolute-url-deriver": ">=1.4",
         "webignition/url": "*"      
-    }      
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0"
+    }
 }

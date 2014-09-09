@@ -4,6 +4,7 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Url\ScopeComparer;
+use webignition\Url\Url;
 
 /**
  * Finds links in an HTML Document
@@ -82,6 +83,25 @@ class HtmlDocumentLinkUrlFinder {
      * @var string
      */
     private $baseUrl = null;
+
+
+    /**
+     * @var Configuration
+     */
+    private $configuration = null;
+
+
+    /**
+     * @return Configuration
+     */
+    public function getConfiguration() {
+        if (is_null($this->configuration)) {
+            $this->configuration = new Configuration();
+        }
+
+        return $this->configuration;
+    }
+
     
     /**
      * 
@@ -202,12 +222,32 @@ class HtmlDocumentLinkUrlFinder {
         $urls = array();
         
         foreach ($allUrls as $url) {
+            if ($this->getConfiguration()->ignoreFragmentInUrlComparison()) {
+                $url = $this->getUniquenessComparisonUrl($url);
+            }
+
             if (!in_array($url, $urls)) {
                 $urls[] = $url;
             }
         }
         
         return $urls;
+    }
+
+
+    /**
+     * @param string $url
+     * @return string
+     */
+    private function getUniquenessComparisonUrl($url) {
+        $urlObject = new Url($url);
+
+        if (!$urlObject->hasFragment()) {
+            return $url;
+        }
+
+        $urlObject->setFragment(null);
+        return (string)$urlObject;
     }
     
     
