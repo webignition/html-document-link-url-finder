@@ -101,7 +101,11 @@ class HtmlDocumentLinkUrlFinder {
      *
      * @return array 
      */
-    public function getUniqueUrls() {        
+    public function getUniqueUrls() {
+        if ($this->getConfiguration()->requiresReset()) {
+            $this->reset();
+        }
+
         $allUrls = $this->getAllUrls();
         $urls = array();
         
@@ -140,6 +144,10 @@ class HtmlDocumentLinkUrlFinder {
      * @return array
      */
     public function getAllUrls() {
+        if ($this->getConfiguration()->requiresReset()) {
+            $this->reset();
+        }
+
         if (!$this->getConfiguration()->hasSourceContent()) {
             return [];
         }
@@ -165,6 +173,10 @@ class HtmlDocumentLinkUrlFinder {
      * @return array
      */
     public function getAll() {
+        if ($this->getConfiguration()->requiresReset()) {
+            $this->reset();
+        }
+
         if (!$this->getConfiguration()->hasSourceContent()) {
             return [];
         }
@@ -184,12 +196,23 @@ class HtmlDocumentLinkUrlFinder {
         return $result;
     }
 
+
+    private function reset() {
+        $this->elementsWithUrlAttributes = null;
+        $this->sourceDOM = null;
+        $this->getConfiguration()->clearReset();
+    }
+
     
     /**
      * 
      * @return array
      */
     public function getElements() {
+        if ($this->getConfiguration()->requiresReset()) {
+            $this->reset();
+        }
+
         if (!$this->getConfiguration()->hasSourceContent()) {
             return [];
         }

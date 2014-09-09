@@ -132,6 +132,8 @@ class Configuration {
             }
         }
 
+        $this->requiresReset = true;
+
         return $this;
     }
 
@@ -171,6 +173,8 @@ class Configuration {
                 $this->elementScope[$index] = strtolower($nodeName);
             }
         }
+
+        $this->requiresReset = true;
 
         return $this;
     }
