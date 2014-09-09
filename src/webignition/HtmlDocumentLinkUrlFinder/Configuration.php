@@ -21,6 +21,13 @@ class Configuration {
 
     /**
      *
+     * @var string
+     */
+    private $sourceUrl = null;
+
+
+    /**
+     *
      * @var array
      */
     private $urlScope = null;
@@ -175,6 +182,26 @@ class Configuration {
      */
     public function getElementScope() {
         return $this->elementScope;
+    }
+
+
+    /**
+     * @param $sourceUrl
+     * @return Configuration
+     */
+    public function setSourceUrl($sourceUrl) {
+        $this->sourceUrl = new NormalisedUrl($sourceUrl);
+        $this->requiresReset = true;
+        return $this;
+    }
+
+
+    /**
+     *
+     * @return string
+     */
+    public function getSourceUrl() {
+        return $this->sourceUrl;
     }
 
 }

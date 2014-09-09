@@ -26,7 +26,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
     public function setUp() {
         $this->finder = new HtmlDocumentLinkUrlFinder();
         $this->finder->getConfiguration()->setSourceContent($this->getFixture($this->getFixtureName()));
-        $this->finder->setSourceUrl($this->getSourceUrl());
+        $this->finder->getConfiguration()->setSourceUrl($this->getSourceUrl());
     }
     
     

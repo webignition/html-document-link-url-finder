@@ -27,13 +27,6 @@ class HtmlDocumentLinkUrlFinder {
     private $ignoredElementNames = array(
         self::BASE_ELEMENT_NAME
     );
-
-    
-    /**
-     *
-     * @var string
-     */
-    private $sourceUrl = null;
     
     
     /**
@@ -103,25 +96,6 @@ class HtmlDocumentLinkUrlFinder {
         return $this->urlScopeComparer;
     }
 
-    
-    /**
-     *
-     * @param string $sourceUrl 
-     */
-    public function setSourceUrl($sourceUrl) {
-        $this->sourceUrl = new NormalisedUrl($sourceUrl);
-        $this->elementsWithUrlAttributes = null;
-    }
-    
-    
-    /**
-     *
-     * @return string
-     */
-    public function getSourceUrl() {
-        return $this->sourceUrl;
-    }
-    
     
     /**
      *
@@ -247,7 +221,7 @@ class HtmlDocumentLinkUrlFinder {
             $url = $this->getUrlAttributeFromElement($element);            
             $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
                 $url,
-                (string)$this->sourceUrl
+                (string)$this->getConfiguration()->getSourceUrl()
             )->getAbsoluteUrl());
 
             if ($this->isUrlInScope($discoveredUrl)) {                
@@ -429,11 +403,11 @@ class HtmlDocumentLinkUrlFinder {
         if (is_null($this->baseUrl)) {
             $baseElement = $this->getBaseElement();
             if (is_null($baseElement)) {
-                $this->baseUrl = (string)$this->sourceUrl;
+                $this->baseUrl = (string)$this->getConfiguration()->getSourceUrl();
             } else {
                 $absoluteUrlDeriver = new \webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver(
                     $baseElement->getAttribute('href'),
-                    (string)$this->sourceUrl                        
+                    (string)$this->getConfiguration()->getSourceUrl()
                 );
                 
                 $this->baseUrl = (string)$absoluteUrlDeriver->getAbsoluteUrl();
