@@ -30,10 +30,10 @@ echo "Finding link URLs in ".$sourceUrl."\n";
 $sourceContent = file_get_contents($sourceUrl);
 
 $finder = new \webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder();
-$finder->setSourceContent($sourceContent);
-$finder->setSourceUrl($sourceUrl);
+$finder->getConfiguration()->setSourceContent($sourceContent);
+$finder->getConfiguration()->setSourceUrl($sourceUrl);
 
-$urls = $finder->urls();
+$urls = $finder->getAllUrls();
 
 echo "Found ".count($urls)." urls\n";
 
