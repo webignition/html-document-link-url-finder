@@ -20,7 +20,7 @@
     "require": {
         "php": ">=5.4.0",
         "webignition/absolute-url-deriver": ">=1.4",
-        "webignition/url": "*"      
+        "webignition/url": ">=1.9.13,<2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0"
