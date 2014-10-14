@@ -3,6 +3,7 @@
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
 use webignition\NormalisedUrl\NormalisedUrl;
+use webignition\WebResource\WebPage\WebPage;
 
 class Configuration {
 
@@ -14,9 +15,9 @@ class Configuration {
 
     /**
      *
-     * @var string
+     * @var WebPage
      */
-    private $sourceContent = null;
+    private $source = null;
 
 
     /**
@@ -73,21 +74,21 @@ class Configuration {
 
 
     /**
-     * @param string $sourceContent
+     * @param WebPage $webPage
      * @return Configuration
      */
-    public function setSourceContent($sourceContent) {
-        $this->sourceContent = $sourceContent;
+    public function setSource(WebPage $webPage) {
+        $this->source = $webPage;
         $this->requiresReset = true;
         return $this;
     }
 
 
     /**
-     * @return string
+     * @return WebPage
      */
-    public function getSourceContent() {
-        return $this->sourceContent;
+    public function getSource() {
+        return $this->source;
     }
 
 
@@ -95,7 +96,11 @@ class Configuration {
      * @return bool
      */
     public function hasSourceContent() {
-        return trim($this->getSourceContent()) != '';
+        if (!$this->source instanceof WebPage) {
+            return false;
+        }
+
+        return trim($this->source->getContent() != '');
     }
 
 

@@ -3,6 +3,7 @@
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
+use webignition\WebResource\WebPage\WebPage;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase {
 
@@ -25,7 +26,12 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
 
     public function setUp() {
         $this->finder = new HtmlDocumentLinkUrlFinder();
-        $this->finder->getConfiguration()->setSourceContent($this->getFixture($this->getFixtureName()));
+
+        $source = new WebPage();
+        $source->setHttpResponse(\Guzzle\Http\Message\Response::fromMessage("HTTP/1.1 200 OK\nContent-Type:text/html"));
+        $source->setContent($this->getFixture($this->getFixtureName()));
+
+        $this->finder->getConfiguration()->setSource($source);
         $this->finder->getConfiguration()->setSourceUrl($this->getSourceUrl());
     }
     

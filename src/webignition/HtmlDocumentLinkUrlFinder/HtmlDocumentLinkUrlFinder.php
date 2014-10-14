@@ -343,8 +343,12 @@ class HtmlDocumentLinkUrlFinder {
             $this->sourceDOM->recover = true;
             $this->sourceDOM->strictErrorChecking = false;            
             $this->sourceDOM->validateOnParse = false;
-            
-            @$this->sourceDOM->loadHTML($this->getConfiguration()->getSourceContent());
+
+            if (!is_null($this->getConfiguration()->getSource()->getCharacterSet())) {
+                @$this->sourceDOM->loadHTML('<?xml encoding="' . $this->getConfiguration()->getSource()->getCharacterSet() . '">' . $this->getConfiguration()->getSource()->getContent());
+            } else {
+                @$this->sourceDOM->loadHTML($this->getConfiguration()->getSource()->getContent());
+            }
         }
         
         return $this->sourceDOM;
