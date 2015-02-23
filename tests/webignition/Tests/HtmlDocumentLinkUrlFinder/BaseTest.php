@@ -4,6 +4,8 @@ namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\WebPage\WebPage;
+use GuzzleHttp\Message\MessageFactory as HttpMessageFactory;
+use GuzzleHttp\Message\ResponseInterface as HttpResponse;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase {
 
@@ -28,7 +30,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
         $this->finder = new HtmlDocumentLinkUrlFinder();
 
         $source = new WebPage();
-        $source->setHttpResponse(\Guzzle\Http\Message\Response::fromMessage("HTTP/1.1 200 OK\nContent-Type:text/html"));
+        $source->setHttpResponse($this->getHttpResponseFromMessage("HTTP/1.1 200 OK\nContent-Type:text/html"));
         $source->setContent($this->getFixture($this->getFixtureName()));
 
         $this->finder->getConfiguration()->setSource($source);
@@ -52,6 +54,15 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
      */
     protected function getFinder() {
         return $this->finder;
+    }
+
+    /**
+     * @param $message
+     * @return HttpResponse
+     */
+    protected function getHttpResponseFromMessage($message) {
+        $factory = new HttpMessageFactory();
+        return $factory->fromMessage($message);
     }
     
 }
