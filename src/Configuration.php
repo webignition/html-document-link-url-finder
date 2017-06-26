@@ -7,6 +7,12 @@ use webignition\WebResource\WebPage\WebPage;
 
 class Configuration
 {
+    const CONFIG_KEY_SOURCE = 'source';
+    const CONFIG_KEY_SOURCE_URL = 'source-url';
+    const CONFIG_KEY_URL_SCOPE = 'url-scope';
+    const CONFIG_KEY_ELEMENT_SCOPE = 'element-scope';
+    const CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON = 'ignore-fragment-in-url-comparison';
+
     /**
      * @var bool
      */
@@ -25,17 +31,45 @@ class Configuration
     /**
      * @var array
      */
-    private $urlScope = null;
+    private $urlScope = [];
 
     /**
      * @var array
      */
-    private $elementScope = null;
+    private $elementScope = [];
 
     /**
      * @var bool
      */
     private $ignoreFragmentInUrlComparison = false;
+
+    /**
+     * @param array $configurationValues
+     */
+    public function __construct($configurationValues = [])
+    {
+        if (isset($configurationValues[self::CONFIG_KEY_SOURCE])) {
+            $this->setSource($configurationValues[self::CONFIG_KEY_SOURCE]);
+        }
+
+        if (isset($configurationValues[self::CONFIG_KEY_SOURCE_URL])) {
+            $this->setSourceUrl($configurationValues[self::CONFIG_KEY_SOURCE_URL]);
+        }
+
+        if (isset($configurationValues[self::CONFIG_KEY_URL_SCOPE])) {
+            $this->setUrlScope($configurationValues[self::CONFIG_KEY_URL_SCOPE]);
+        }
+
+        if (isset($configurationValues[self::CONFIG_KEY_ELEMENT_SCOPE])) {
+            $this->setElementScope($configurationValues[self::CONFIG_KEY_ELEMENT_SCOPE]);
+        }
+
+        if (isset($configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON])) {
+            $this->setIgnoreFragmentInUrlComparison(
+                $configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON]
+            );
+        }
+    }
 
     /**
      * @param bool $ignoreFragmentInUrlComparison
@@ -130,7 +164,7 @@ class Configuration
      */
     public function hasUrlScope()
     {
-        return !is_null($this->urlScope);
+        return !empty($this->urlScope);
     }
 
     /**

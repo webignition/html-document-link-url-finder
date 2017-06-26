@@ -23,6 +23,71 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider createDataProvider
+     *
+     * @param array $configurationValues
+     * @param string $expectedSource
+     * @param string $expectedSourceUrl
+     * @param array $expectedUrlScope
+     * @param array $expectedElementScope
+     * @param bool $expectedIgnoreFragmentInUrlComparison
+     */
+    public function testCreate(
+        $configurationValues,
+        $expectedSource,
+        $expectedSourceUrl,
+        $expectedUrlScope,
+        $expectedElementScope,
+        $expectedIgnoreFragmentInUrlComparison
+    ) {
+        $configuration = new Configuration($configurationValues);
+
+        $this->assertEquals($expectedSource, $configuration->getSource());
+        $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
+        $this->assertEquals($expectedUrlScope, $configuration->getUrlScope());
+        $this->assertEquals($expectedElementScope, $configuration->getElementScope());
+        $this->assertEquals($expectedIgnoreFragmentInUrlComparison, $configuration->getIgnoreFragmentInUrlComparison());
+    }
+
+    /**
+     * @return array
+     */
+    public function createDataProvider()
+    {
+        $webPage = \Mockery::mock(WebPage::class);
+
+        return [
+            'default' => [
+                'configurationValues' => [],
+                'expectedSource' => '',
+                'expectedSourceUrl' => '',
+                'expectedUrlScope' => [],
+                'expectedElementScope' => [],
+                'expectedIgnoreFragmentInUrlComparison' => false,
+            ],
+            'non-default' => [
+                'configurationValues' => [
+                    Configuration::CONFIG_KEY_SOURCE => $webPage,
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                    Configuration::CONFIG_KEY_URL_SCOPE => 'http://example.com/',
+                    Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'a',
+                    Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
+
+                ],
+                'expectedSource' => $webPage,
+                'expectedSourceUrl' => 'http://example.com/',
+                'expectedUrlScope' => [
+                    'http://example.com/',
+                ],
+                'expectedElementScope' => [
+                    'a',
+                ],
+                'expectedIgnoreFragmentInUrlComparison' => true,
+            ],
+        ];
+    }
+
+    /**
      * @dataProvider elementScopeDataProvider
      *
      * @param string $scope
@@ -202,19 +267,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function hasSourceContentDataProvider()
     {
-        /* @var ResponseInterface $httpResponse */
-        $httpResponse = \Mockery::mock(ResponseInterface::class);
-        $httpResponse
-            ->shouldReceive('getBody')
+        $webPage = \Mockery::mock(WebPage::class);
+        $webPage
+            ->shouldReceive('getContent')
             ->andReturn('foo');
-
-        $httpResponse
-            ->shouldReceive('getHeader')
-            ->with('content-type')
-            ->andReturn('text/html');
-
-        $webPage = new WebPage();
-        $webPage->setHttpResponse($httpResponse);
 
         return [
             'no source' => [
