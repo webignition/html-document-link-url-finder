@@ -38,32 +38,23 @@ class Configuration
     private $ignoreFragmentInUrlComparison = false;
 
     /**
-     * @return Configuration
+     * @param bool $ignoreFragmentInUrlComparison
      */
-    public function enableIgnoreFragmentInUrlComparison()
+    public function setIgnoreFragmentInUrlComparison($ignoreFragmentInUrlComparison)
     {
-        $this->ignoreFragmentInUrlComparison = true;
-    }
-
-    /**
-     * @return Configuration
-     */
-    public function disableIgnoreFragmentInUrlComparison()
-    {
-        $this->ignoreFragmentInUrlComparison = false;
+        $this->ignoreFragmentInUrlComparison = $ignoreFragmentInUrlComparison;
     }
 
     /**
      * @return bool
      */
-    public function ignoreFragmentInUrlComparison()
+    public function getIgnoreFragmentInUrlComparison()
     {
         return $this->ignoreFragmentInUrlComparison;
     }
 
     /**
      * @param WebPage $webPage
-     * @return Configuration
      */
     public function setSource(WebPage $webPage)
     {
@@ -84,11 +75,11 @@ class Configuration
      */
     public function hasSourceContent()
     {
-        if (!$this->source instanceof WebPage) {
+        if (empty($this->source)) {
             return false;
         }
 
-        return trim($this->source->getContent() != '');
+        return !empty(trim($this->source->getContent()));
     }
 
     /**
@@ -106,7 +97,6 @@ class Configuration
     {
         $this->requiresReset = false;
     }
-
 
     /**
      * @param string|array $scope
