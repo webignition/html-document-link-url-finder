@@ -5,97 +5,85 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\WebResource\WebPage\WebPage;
 
-class Configuration {
-
+class Configuration
+{
     /**
      * @var bool
      */
     private $requiresReset = false;
 
-
     /**
-     *
      * @var WebPage
      */
     private $source = null;
 
-
     /**
-     *
      * @var string
      */
     private $sourceUrl = null;
 
-
     /**
-     *
      * @var array
      */
     private $urlScope = null;
 
-
     /**
-     *
      * @var array
      */
     private $elementScope = null;
-
 
     /**
      * @var bool
      */
     private $ignoreFragmentInUrlComparison = false;
 
-
     /**
      * @return Configuration
      */
-    public function enableIgnoreFragmentInUrlComparison() {
+    public function enableIgnoreFragmentInUrlComparison()
+    {
         $this->ignoreFragmentInUrlComparison = true;
-        return $this;
     }
-
 
     /**
      * @return Configuration
      */
-    public function disableIgnoreFragmentInUrlComparison() {
+    public function disableIgnoreFragmentInUrlComparison()
+    {
         $this->ignoreFragmentInUrlComparison = false;
-        return $this;
     }
-
 
     /**
      * @return bool
      */
-    public function ignoreFragmentInUrlComparison() {
+    public function ignoreFragmentInUrlComparison()
+    {
         return $this->ignoreFragmentInUrlComparison;
     }
-
 
     /**
      * @param WebPage $webPage
      * @return Configuration
      */
-    public function setSource(WebPage $webPage) {
+    public function setSource(WebPage $webPage)
+    {
         $this->source = $webPage;
         $this->requiresReset = true;
-        return $this;
     }
-
 
     /**
      * @return WebPage
      */
-    public function getSource() {
+    public function getSource()
+    {
         return $this->source;
     }
-
 
     /**
      * @return bool
      */
-    public function hasSourceContent() {
+    public function hasSourceContent()
+    {
         if (!$this->source instanceof WebPage) {
             return false;
         }
@@ -103,29 +91,28 @@ class Configuration {
         return trim($this->source->getContent() != '');
     }
 
-
     /**
      * @return bool
      */
-    public function requiresReset() {
+    public function requiresReset()
+    {
         return $this->requiresReset;
     }
-
 
     /**
      * @return Configuration
      */
-    public function clearReset() {
+    public function clearReset()
+    {
         $this->requiresReset = false;
-        return $this;
     }
 
 
     /**
      * @param string|array $scope
-     * @return Configuration
      */
-    public function setUrlScope($scope) {
+    public function setUrlScope($scope)
+    {
         if (is_string($scope)) {
             $this->urlScope = array(new NormalisedUrl($scope));
         }
@@ -138,33 +125,29 @@ class Configuration {
         }
 
         $this->requiresReset = true;
-
-        return $this;
     }
-
 
     /**
-     *
      * @return array
      */
-    public function getUrlScope() {
+    public function getUrlScope()
+    {
         return $this->urlScope;
     }
-
 
     /**
      * @return bool
      */
-    public function hasUrlScope() {
+    public function hasUrlScope()
+    {
         return !is_null($this->urlScope);
     }
 
-
     /**
      * @param string|array $scope
-     * @return Configuration
      */
-    public function setElementScope($scope) {
+    public function setElementScope($scope)
+    {
         if (is_string($scope)) {
             $this->elementScope = array($scope);
         }
@@ -180,37 +163,31 @@ class Configuration {
         }
 
         $this->requiresReset = true;
-
-        return $this;
     }
 
-
     /**
-     *
      * @return array
      */
-    public function getElementScope() {
+    public function getElementScope()
+    {
         return $this->elementScope;
     }
 
 
     /**
      * @param $sourceUrl
-     * @return Configuration
      */
-    public function setSourceUrl($sourceUrl) {
+    public function setSourceUrl($sourceUrl)
+    {
         $this->sourceUrl = new NormalisedUrl($sourceUrl);
         $this->requiresReset = true;
-        return $this;
     }
-
 
     /**
-     *
      * @return string
      */
-    public function getSourceUrl() {
+    public function getSourceUrl()
+    {
         return $this->sourceUrl;
     }
-
 }
