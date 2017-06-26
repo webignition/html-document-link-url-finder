@@ -20,15 +20,9 @@ class HtmlDocumentLinkUrlFinder
 
     const BASE_ELEMENT_NAME = 'base';
 
-    private $urlAttributeNames = array(
-        self::HREF_ATTRIBUTE_NAME,
-        self::SRC_ATTRIBUTE_NAME
-    );
-
     private $ignoredElementNames = array(
         self::BASE_ELEMENT_NAME
     );
-
 
     /**
      * @var \DOMDocument
@@ -41,7 +35,7 @@ class HtmlDocumentLinkUrlFinder
     private $elementsWithUrlAttributes = null;
 
     /**
-     * @var \webignition\Url\ScopeComparer
+     * @var ScopeComparer
      */
     private $urlScopeComparer = null;
 
@@ -56,6 +50,14 @@ class HtmlDocumentLinkUrlFinder
     private $configuration = null;
 
     /**
+     * @param Configuration $configuration
+     */
+    public function setConfiguration(Configuration $configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
      * @return Configuration
      */
     public function getConfiguration()
@@ -65,14 +67,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $this->configuration;
-    }
-
-    /**
-     * @param ScopeComparer $scopeComparer
-     */
-    public function setUrlScopeComparer(ScopeComparer $scopeComparer)
-    {
-        $this->urlScopeComparer = $scopeComparer;
     }
 
     /**
@@ -101,7 +95,7 @@ class HtmlDocumentLinkUrlFinder
         $urls = array();
 
         foreach ($allUrls as $url) {
-            if ($this->getConfiguration()->ignoreFragmentInUrlComparison()) {
+            if ($this->getConfiguration()->getIgnoreFragmentInUrlComparison()) {
                 $url = $this->getUniquenessComparisonUrl($url);
             }
 
@@ -251,13 +245,11 @@ class HtmlDocumentLinkUrlFinder
      */
     private function getUrlAttributeFromElement(\DOMElement $element)
     {
-        foreach ($this->urlAttributeNames as $attributeName) {
-            if ($element->hasAttribute($attributeName)) {
-                return $element->getAttribute($attributeName);
-            }
+        if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
+            return $element->getAttribute(self::HREF_ATTRIBUTE_NAME);
         }
 
-        return null;
+        return $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
     }
 
     /**
@@ -286,10 +278,6 @@ class HtmlDocumentLinkUrlFinder
      */
     private function isElementInContext(\DOMElement $element)
     {
-        if (!is_array($this->getConfiguration()->getElementScope())) {
-            return true;
-        }
-
         if (count($this->getConfiguration()->getElementScope()) === 0) {
             return true;
         }
@@ -360,7 +348,6 @@ class HtmlDocumentLinkUrlFinder
                     $elements = array_merge($elements, $this->getElementsWithinElement($childNode));
                 }
             }
-
         }
 
         return $elements;
@@ -403,13 +390,11 @@ class HtmlDocumentLinkUrlFinder
      */
     private function hasUrlAttribute(\DOMElement $element)
     {
-        foreach ($this->urlAttributeNames as $attributeName) {
-            if ($element->hasAttribute($attributeName)) {
-                return true;
-            }
+        if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
+            return true;
         }
 
-        return false;
+        return $element->hasAttribute(self::SRC_ATTRIBUTE_NAME);
     }
 
     private function getBaseUrl()

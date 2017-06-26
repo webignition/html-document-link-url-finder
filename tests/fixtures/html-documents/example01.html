@@ -2,6 +2,11 @@
 <html lang="en" xml:lang="en">
     <head>
         <title>Example</title>
+        <link href="//cdn.example.com/foo.css" rel="stylesheet">
+        <link href="/assets/css/main.css" rel="stylesheet">
+
+        <script type="text/javascript" src="//cdn.example.com/foo.js"></script>
+        <script type="text/javascript" src="/assets/vendor/foo.js"></script>
     </head>
     <body>
         <ul>
@@ -10,14 +15,15 @@
             <li><a href="//example.com/protocol-relative-same-host">Protocol Relative Same Host</a></li>
             <li><a href="//another.example.com/protocol-relative-same-host">Protocol Relative Different Host</a></li>
             <li><a href="#fragment-only">Fragment Only</a></li>
-            <li><a href="#fragment-only">Repeated Fragment Only (should be ignored)</a></li>
+            <li><a href="#fragment-only">Repeated Fragment Only</a></li>
+            <li><a href="http://example.com/">Example no subdomain</a></li>
+            <li><a href="http://www.example.com/">Example www subdomain</a></li>
+            <li><a href="./foo/bar.html">Path resolution example</a></li>
+            <li><a href="#">Empty fragment only</a></li>
         </ul>
-
         <footer>
             <ul class="social">
                 <li><a href="http://www.youtube.com/example"><img src="/images/youtube.png" /></a></li>
-                <li><a href="http://blog.example.com"><img src="/images/blog.png" /></a></li>
-                <li><a href="http://twitter.com/example"><img src="/images/twitter.png" /></a></li>
             </ul>
         </footer>
     </body>
