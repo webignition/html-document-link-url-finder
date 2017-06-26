@@ -36,18 +36,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
         $this->finder->getConfiguration()->setSource($source);
         $this->finder->getConfiguration()->setSourceUrl($this->getSourceUrl());
     }
-    
-    
+
+
     /**
-     * 
+     *
      * @param string $name
      * @return string
      */
     protected function getFixture($name) {
-        return file_get_contents(__DIR__ . '/../../../fixtures/' . $name . '.html');
+        return file_get_contents(__DIR__ . '/fixtures/' . $name . '.html');
     }
-    
-    
+
+
     /**
      *
      * @return \webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder
@@ -64,5 +64,5 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase {
         $factory = new HttpMessageFactory();
         return $factory->fromMessage($message);
     }
-    
+
 }
