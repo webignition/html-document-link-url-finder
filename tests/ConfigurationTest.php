@@ -2,10 +2,8 @@
 
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
-use GuzzleHttp\Message\MessageFactory;
 use GuzzleHttp\Message\ResponseInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
-use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\WebPage\WebPage;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
