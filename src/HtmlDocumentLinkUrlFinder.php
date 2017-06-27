@@ -365,7 +365,11 @@ class HtmlDocumentLinkUrlFinder
     {
         if (is_null($this->elementsWithUrlAttributes)) {
             $this->elementsWithUrlAttributes = array();
-            $elements = $this->getElementsWithinElement($this->sourceDOM()->documentElement);
+            $elementScope = $this->getConfiguration()->getElementScope();
+
+            $elements = empty($elementScope)
+                ? $this->getAllElements()
+                : $this->getScopedElements();
 
             foreach ($elements as $element) {
                 /* @var $element \DOMElement */
@@ -376,6 +380,35 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $this->elementsWithUrlAttributes;
+    }
+
+    /**
+     * @return \DOMElement[]
+     */
+    private function getAllElements()
+    {
+        return $this->getElementsWithinElement($this->sourceDOM()->documentElement);
+    }
+
+    /**
+     * @return \DOMElement[]
+     */
+    private function getScopedElements()
+    {
+        $elements = [];
+
+        foreach ($this->getConfiguration()->getElementScope() as $tagName) {
+            $domNodeList = $this->sourceDOM()->getElementsByTagName($tagName);
+            $elementsByTagName = [];
+
+            foreach ($domNodeList as $node) {
+                $elementsByTagName[] = $node;
+            }
+
+            $elements = array_merge($elements, $elementsByTagName);
+        }
+
+        return $elements;
     }
 
     /**
