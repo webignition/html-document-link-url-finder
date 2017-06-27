@@ -414,6 +414,18 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     'http://example.com/images/youtube.png',
                 ],
             ],
+            'leading null bytes' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('leading-null-bytes'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                ]),
+                'expectedResult' => [
+                    'http://example.com/foo',
+                ],
+            ],
         ];
     }
 
