@@ -318,14 +318,19 @@ class HtmlDocumentLinkUrlFinder
             $this->sourceDOM->strictErrorChecking = false;
             $this->sourceDOM->validateOnParse = false;
 
-            if (!is_null($this->getConfiguration()->getSource()->getCharacterSet())) {
+            $source = $this->getConfiguration()->getSource();
+
+            $characterSet = $source->getCharacterSet();
+            $content = trim($source->getContent());
+
+            if (!empty($characterSet)) {
                 @$this->sourceDOM->loadHTML(
                     '<?xml encoding="'
                     . $this->getConfiguration()->getSource()->getCharacterSet()
-                    . '">' . $this->getConfiguration()->getSource()->getContent()
+                    . '">' . $content
                 );
             } else {
-                @$this->sourceDOM->loadHTML($this->getConfiguration()->getSource()->getContent());
+                @$this->sourceDOM->loadHTML($content);
             }
         }
 
