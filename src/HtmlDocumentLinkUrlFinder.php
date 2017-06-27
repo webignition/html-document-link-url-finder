@@ -220,10 +220,6 @@ class HtmlDocumentLinkUrlFinder
         $elements = array();
 
         foreach ($elementsWithUrlAttributes as $element) {
-            if (!$this->isElementInContext($element)) {
-                continue;
-            }
-
             $url = $this->getUrlAttributeFromElement($element);
             $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
                 $url,
@@ -270,19 +266,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return false;
-    }
-
-    /**
-     * @param \DOMElement $element
-     * @return boolean
-     */
-    private function isElementInContext(\DOMElement $element)
-    {
-        if (count($this->getConfiguration()->getElementScope()) === 0) {
-            return true;
-        }
-
-        return in_array($element->nodeName, $this->getConfiguration()->getElementScope());
     }
 
     /**
@@ -348,6 +331,7 @@ class HtmlDocumentLinkUrlFinder
         foreach ($element->childNodes as $childNode) {
             /* @var $childNode \DOMNode */
             if ($childNode->nodeType == XML_ELEMENT_NODE) {
+                /* @var $childNode \DOMElement */
                 $elements[] = $childNode;
                 if ($childNode->hasChildNodes()) {
                     $elements = array_merge($elements, $this->getElementsWithinElement($childNode));
@@ -387,7 +371,26 @@ class HtmlDocumentLinkUrlFinder
      */
     private function getAllElements()
     {
-        return $this->getElementsWithinElement($this->sourceDOM()->documentElement);
+        $attributeScopeName = $this->getConfiguration()->getAttributeScopeName();
+        $attributeScopeValue = $this->getConfiguration()->getAttributeScopeValue();
+        $hasAttributeScope = !empty($attributeScopeName);
+
+        $elements = $this->getElementsWithinElement($this->sourceDOM()->documentElement);
+
+        if ($hasAttributeScope) {
+            $attributeScopedElements = [];
+
+            foreach ($elements as $element) {
+                /* @var $element \DOMElement */
+                if ($element->getAttribute($attributeScopeName) == $attributeScopeValue) {
+                    $attributeScopedElements[] = $element;
+                }
+            }
+
+            return $attributeScopedElements;
+        }
+
+        return $elements;
     }
 
     /**
@@ -395,6 +398,9 @@ class HtmlDocumentLinkUrlFinder
      */
     private function getScopedElements()
     {
+        $attributeScopeName = $this->getConfiguration()->getAttributeScopeName();
+        $attributeScopeValue = $this->getConfiguration()->getAttributeScopeValue();
+        $hasAttributeScope = !empty($attributeScopeName);
         $elements = [];
 
         foreach ($this->getConfiguration()->getElementScope() as $tagName) {
@@ -402,7 +408,14 @@ class HtmlDocumentLinkUrlFinder
             $elementsByTagName = [];
 
             foreach ($domNodeList as $node) {
-                $elementsByTagName[] = $node;
+                /* @var $node \DOMElement */
+                $includeNode = $hasAttributeScope
+                    ? $node->getAttribute($attributeScopeName) == $attributeScopeValue
+                    : true;
+
+                if ($includeNode) {
+                    $elementsByTagName[] = $node;
+                }
             }
 
             $elements = array_merge($elements, $elementsByTagName);

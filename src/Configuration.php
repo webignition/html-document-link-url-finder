@@ -12,6 +12,8 @@ class Configuration
     const CONFIG_KEY_URL_SCOPE = 'url-scope';
     const CONFIG_KEY_ELEMENT_SCOPE = 'element-scope';
     const CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON = 'ignore-fragment-in-url-comparison';
+    const CONFIG_KEY_ATTRIBUTE_SCOPE_NAME = 'attribute-scope-name';
+    const CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE = 'attribute-scope-value';
 
     /**
      * @var bool
@@ -39,6 +41,16 @@ class Configuration
     private $elementScope = [];
 
     /**
+     * @var string
+     */
+    private $attributeScopeName = null;
+
+    /**
+     * @var string
+     */
+    private $attributeScopeValue = null;
+
+    /**
      * @var bool
      */
     private $ignoreFragmentInUrlComparison = false;
@@ -64,11 +76,48 @@ class Configuration
             $this->setElementScope($configurationValues[self::CONFIG_KEY_ELEMENT_SCOPE]);
         }
 
+        $hasAttributeScopeName = isset($configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME]);
+        $hasAttributeScopeValue = isset($configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE]);
+
+        if ($hasAttributeScopeName && $hasAttributeScopeValue) {
+            $this->setAttributeScope(
+                $configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME],
+                $configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE]
+            );
+        }
+
         if (isset($configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON])) {
             $this->setIgnoreFragmentInUrlComparison(
                 $configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON]
             );
         }
+    }
+
+    /**
+     * @param string $name
+     * @param string $value
+     */
+    public function setAttributeScope($name, $value)
+    {
+        $this->attributeScopeName = $name;
+        $this->attributeScopeValue = $value;
+        $this->requiresReset = true;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttributeScopeName()
+    {
+        return $this->attributeScopeName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAttributeScopeValue()
+    {
+        return $this->attributeScopeValue;
     }
 
     /**
