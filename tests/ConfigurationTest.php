@@ -32,6 +32,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param string $expectedAttributeScopeName
      * @param string $expectedAttributeScopeValue
      * @param bool $expectedIgnoreFragmentInUrlComparison
+     * @param bool $expectedIgnoreEmptyHref
      */
     public function testCreate(
         $configurationValues,
@@ -41,7 +42,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expectedElementScope,
         $expectedAttributeScopeName,
         $expectedAttributeScopeValue,
-        $expectedIgnoreFragmentInUrlComparison
+        $expectedIgnoreFragmentInUrlComparison,
+        $expectedIgnoreEmptyHref
     ) {
         $configuration = new Configuration($configurationValues);
 
@@ -52,6 +54,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedAttributeScopeName, $configuration->getAttributeScopeName());
         $this->assertEquals($expectedAttributeScopeValue, $configuration->getAttributeScopeValue());
         $this->assertEquals($expectedIgnoreFragmentInUrlComparison, $configuration->getIgnoreFragmentInUrlComparison());
+        $this->assertEquals($expectedIgnoreEmptyHref, $configuration->getIgnoreEmptyHref());
     }
 
     /**
@@ -71,6 +74,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expectedAttributeScopeName' => null,
                 'expectedAttributeScopeValue' => null,
                 'expectedIgnoreFragmentInUrlComparison' => false,
+                'expectedIgnoreEmptyHref' => false,
             ],
             'non-default' => [
                 'configurationValues' => [
@@ -81,6 +85,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'name',
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'value',
+                    Configuration::CONFIG_KEY_IGNORE_EMPTY_HREF => true,
                 ],
                 'expectedSource' => $webPage,
                 'expectedSourceUrl' => 'http://example.com/',
@@ -93,6 +98,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expectedAttributeScopeName' => 'name',
                 'expectedAttributeScopeValue' => 'value',
                 'expectedIgnoreFragmentInUrlComparison' => true,
+                'expectedIgnoreEmptyHref' => true,
             ],
         ];
     }

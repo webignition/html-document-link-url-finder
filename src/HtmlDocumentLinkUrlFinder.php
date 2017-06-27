@@ -442,10 +442,27 @@ class HtmlDocumentLinkUrlFinder
     private function hasUrlAttribute(\DOMElement $element)
     {
         if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
-            return true;
+            return $this->hasNonEmptyUrlAttribute($element, self::HREF_ATTRIBUTE_NAME);
         }
 
-        return $element->hasAttribute(self::SRC_ATTRIBUTE_NAME);
+        if ($element->hasAttribute(self::SRC_ATTRIBUTE_NAME)) {
+            return $this->hasNonEmptyUrlAttribute($element, self::HREF_ATTRIBUTE_NAME);
+        }
+
+        return false;
+    }
+
+    /**
+     * @param \DOMElement $element
+     * @param string $attributeName
+     *
+     * @return bool
+     */
+    private function hasNonEmptyUrlAttribute(\DOMElement $element, $attributeName)
+    {
+        return $this->getConfiguration()->getIgnoreEmptyHref()
+            ? !empty(trim($element->getAttribute($attributeName)))
+            : true;
     }
 
     private function getBaseUrl()

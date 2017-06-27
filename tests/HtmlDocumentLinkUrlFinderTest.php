@@ -84,6 +84,10 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                         'element' => '<link href="/assets/css/main.css" rel="stylesheet">',
                     ],
                     [
+                        'url' => 'http://example.com/',
+                        'element' => '<link href="" rel="stylesheet">',
+                    ],
+                    [
                         'url' => 'http://cdn.example.com/foo.js',
                         'element' => '<script type="text/javascript" src="//cdn.example.com/foo.js"></script>',
                     ],
@@ -163,6 +167,10 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                         'url' => 'http://example.com/assets/css/main.css',
                         'element' => '<link href="/assets/css/main.css" rel="stylesheet">',
                     ],
+                    [
+                        'url' => 'http://example.com/',
+                        'element' => '<link href="" rel="stylesheet">',
+                    ],
                 ],
             ],
             'element scope link, no source content type' => [
@@ -182,6 +190,10 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     [
                         'url' => 'http://example.com/assets/css/main.css',
                         'element' => '<link href="/assets/css/main.css" rel="stylesheet">',
+                    ],
+                    [
+                        'url' => 'http://example.com/',
+                        'element' => '<link href="" rel="stylesheet">',
                     ],
                 ],
             ],
@@ -207,6 +219,10 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                         'element' => '<link href="/assets/css/main.css" rel="stylesheet">',
                     ],
                     [
+                        'url' => 'http://example.com/',
+                        'element' => '<link href="" rel="stylesheet">',
+                    ],
+                    [
                         'url' => 'http://cdn.example.com/foo.js',
                         'element' => '<script type="text/javascript" src="//cdn.example.com/foo.js"></script>',
                     ],
@@ -229,6 +245,10 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     [
                         'url' => 'http://example.com/assets/css/main.css',
                         'element' => '<link href="/assets/css/main.css" rel="stylesheet">',
+                    ],
+                    [
+                        'url' => 'http://example.com/',
+                        'element' => '<link href="" rel="stylesheet">',
                     ],
                     [
                         'url' => 'http://example.com/assets/vendor/foo.js',
@@ -398,6 +418,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => [
                     'http://cdn.example.com/foo.css',
                     'http://example.com/assets/css/main.css',
+                    'http://example.com/',
                     'http://cdn.example.com/foo.js',
                     'http://example.com/assets/vendor/foo.js',
                     'http://example.com/relative-path',
@@ -439,6 +460,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => [
                     'http://cdn.example.com/foo.css',
                     'http://example.com/assets/css/main.css',
+                    'http://example.com/',
                 ],
             ],
             'element scope link, attribute scope rel=stylesheet' => [
@@ -451,6 +473,24 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'link',
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'rel',
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'stylesheet',
+                ]),
+                'expectedResult' => [
+                    'http://cdn.example.com/foo.css',
+                    'http://example.com/assets/css/main.css',
+                    'http://example.com/',
+                ],
+            ],
+            'element scope link, attribute scope rel=stylesheet, ignore empty href' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('example01'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                    Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'link',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'rel',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'stylesheet',
+                    Configuration::CONFIG_KEY_IGNORE_EMPTY_HREF => true,
                 ]),
                 'expectedResult' => [
                     'http://cdn.example.com/foo.css',
@@ -610,6 +650,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => [
                     '<link href="//cdn.example.com/foo.css" rel="stylesheet">',
                     '<link href="/assets/css/main.css" rel="stylesheet">',
+                    '<link href="" rel="stylesheet">',
                     '<script type="text/javascript" src="//cdn.example.com/foo.js"></script>',
                     '<script type="text/javascript" src="/assets/vendor/foo.js"></script>',
                     '<a href="relative-path">Relative Path</a>',

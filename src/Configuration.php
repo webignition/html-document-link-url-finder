@@ -14,6 +14,7 @@ class Configuration
     const CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON = 'ignore-fragment-in-url-comparison';
     const CONFIG_KEY_ATTRIBUTE_SCOPE_NAME = 'attribute-scope-name';
     const CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE = 'attribute-scope-value';
+    const CONFIG_KEY_IGNORE_EMPTY_HREF = 'ignore-empty-href';
 
     /**
      * @var bool
@@ -56,6 +57,11 @@ class Configuration
     private $ignoreFragmentInUrlComparison = false;
 
     /**
+     * @var bool
+     */
+    private $ignoreEmptyHref = false;
+
+    /**
      * @param array $configurationValues
      */
     public function __construct($configurationValues = [])
@@ -91,6 +97,27 @@ class Configuration
                 $configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON]
             );
         }
+
+        if (isset($configurationValues[self::CONFIG_KEY_IGNORE_EMPTY_HREF])) {
+            $this->setIgnoreEmptyHref($configurationValues[self::CONFIG_KEY_IGNORE_EMPTY_HREF]);
+        }
+    }
+
+    /**
+     * @param bool $ignoreEmptyHref
+     */
+    public function setIgnoreEmptyHref($ignoreEmptyHref)
+    {
+        $this->ignoreEmptyHref = $ignoreEmptyHref;
+        $this->requiresReset = true;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getIgnoreEmptyHref()
+    {
+        return $this->ignoreEmptyHref;
     }
 
     /**
