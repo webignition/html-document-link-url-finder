@@ -2,7 +2,6 @@
 
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
-use GuzzleHttp\Message\ResponseInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
 use webignition\WebResource\WebPage\WebPage;
 
@@ -30,6 +29,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param string $expectedSourceUrl
      * @param array $expectedUrlScope
      * @param array $expectedElementScope
+     * @param string $expectedAttributeScopeName
+     * @param string $expectedAttributeScopeValue
      * @param bool $expectedIgnoreFragmentInUrlComparison
      */
     public function testCreate(
@@ -38,6 +39,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expectedSourceUrl,
         $expectedUrlScope,
         $expectedElementScope,
+        $expectedAttributeScopeName,
+        $expectedAttributeScopeValue,
         $expectedIgnoreFragmentInUrlComparison
     ) {
         $configuration = new Configuration($configurationValues);
@@ -46,6 +49,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
         $this->assertEquals($expectedUrlScope, $configuration->getUrlScope());
         $this->assertEquals($expectedElementScope, $configuration->getElementScope());
+        $this->assertEquals($expectedAttributeScopeName, $configuration->getAttributeScopeName());
+        $this->assertEquals($expectedAttributeScopeValue, $configuration->getAttributeScopeValue());
         $this->assertEquals($expectedIgnoreFragmentInUrlComparison, $configuration->getIgnoreFragmentInUrlComparison());
     }
 
@@ -63,6 +68,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expectedSourceUrl' => '',
                 'expectedUrlScope' => [],
                 'expectedElementScope' => [],
+                'expectedAttributeScopeName' => null,
+                'expectedAttributeScopeValue' => null,
                 'expectedIgnoreFragmentInUrlComparison' => false,
             ],
             'non-default' => [
@@ -72,7 +79,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     Configuration::CONFIG_KEY_URL_SCOPE => 'http://example.com/',
                     Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'a',
                     Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
-
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'name',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'value',
                 ],
                 'expectedSource' => $webPage,
                 'expectedSourceUrl' => 'http://example.com/',
@@ -82,6 +90,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expectedElementScope' => [
                     'a',
                 ],
+                'expectedAttributeScopeName' => 'name',
+                'expectedAttributeScopeValue' => 'value',
                 'expectedIgnoreFragmentInUrlComparison' => true,
             ],
         ];

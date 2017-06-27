@@ -426,6 +426,37 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     'http://example.com/foo',
                 ],
             ],
+            'attribute scope rel=stylesheet' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('example01'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'rel',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'stylesheet',
+                ]),
+                'expectedResult' => [
+                    'http://cdn.example.com/foo.css',
+                    'http://example.com/assets/css/main.css',
+                ],
+            ],
+            'element scope link, attribute scope rel=stylesheet' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('example01'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                    Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'link',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'rel',
+                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'stylesheet',
+                ]),
+                'expectedResult' => [
+                    'http://cdn.example.com/foo.css',
+                    'http://example.com/assets/css/main.css',
+                ],
+            ],
         ];
     }
 
