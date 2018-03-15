@@ -441,27 +441,72 @@ class HtmlDocumentLinkUrlFinder
      */
     private function hasUrlAttribute(\DOMElement $element)
     {
-        if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
-            return $this->hasNonEmptyUrlAttribute($element, self::HREF_ATTRIBUTE_NAME);
+        $hasHrefAttribute = $element->hasAttribute(self::HREF_ATTRIBUTE_NAME);
+        $hasSrcAttribute = $element->hasAttribute(self::SRC_ATTRIBUTE_NAME);
+
+        if (!$hasHrefAttribute && !$hasSrcAttribute) {
+            return false;
         }
 
-        if ($element->hasAttribute(self::SRC_ATTRIBUTE_NAME)) {
-            return $this->hasNonEmptyUrlAttribute($element, self::HREF_ATTRIBUTE_NAME);
+        $attributeValue = '';
+
+        if ($hasHrefAttribute) {
+            $attributeValue = $element->getAttribute(self::HREF_ATTRIBUTE_NAME);
+        } elseif ($hasSrcAttribute) {
+            $attributeValue = $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
         }
 
-        return false;
+        if (!$this->hasNonEmptyUrlAttribute($attributeValue)) {
+            return false;
+        }
+
+        if ($this->looksLikeConcatenatedJsString($attributeValue)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
-     * @param \DOMElement $element
-     * @param string $attributeName
+     * Determine if the URL value from an element attribute looks like a concatenated JS string
+     *
+     * Some documents contain script elements which concatenate JS values together to make URLs for elements that
+     * are inserted into the DOM. This is all fine.
+     * e.g. VimeoList.push('<img src="' + value['ListImage'] + '" />');
+     *
+     * A subset of such documents are badly-formed such that the script contents are not recognised by the DOM parser
+     * and end up as element nodes in the DOM
+     * e.g. the above would result in a <img src="' + value['ListImage'] + '" /> element present in the DOM.
+     *
+     * This applies to both the \DOMDocument parser and the W3C HTML validation parser. It is assumed both parsers
+     * are not identically buggy.
+     *
+     * We need to check if a URL value looks like a concatenated JS string so that we can exclude them.
+     *
+     * Example URL value: ' + value['ListImage'] + '
+     * Pseudopattern: START'<whitespace?><plus char><whitespace?><anything><whitespace?><plus char><whitespace?>'END
+     *
+     * @param string $url
      *
      * @return bool
      */
-    private function hasNonEmptyUrlAttribute(\DOMElement $element, $attributeName)
+    private function looksLikeConcatenatedJsString($url)
+    {
+        $patternBody = "^'\s+\+\s+.*\s+\+\s+'$";
+        $pattern = '/'.$patternBody.'/i';
+
+        return preg_match($pattern, $url) > 0;
+    }
+
+    /**
+     * @param string $attributeValue
+     *
+     * @return bool
+     */
+    private function hasNonEmptyUrlAttribute($attributeValue)
     {
         return $this->getConfiguration()->getIgnoreEmptyHref()
-            ? !empty(trim($element->getAttribute($attributeName)))
+            ? !empty(trim($attributeValue))
             : true;
     }
 

@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Example</title>
+    </head>
+    <body>
+        <div>
+            <a href="http://example.com/">Example no subdomain</a>
+            <script type="text/javascript" src="/foo.js"></script>
+            <script type="text/javascript">
+                function _VimeoPlayerBuild(Target, PlayListData) {
+                    Target.append('<div class="VimeoStage"></div>');
+
+                    $.each(PlayListData, function (key, value) {
+                        VimeoList.push('<a href="' + value['Link'] + '" title="' + value['Title'] + '" data-id="' + value['ID'] + '">');
+                        VimeoList.push('<img src="' + value['ListImage'] + '" />');
+                        VimeoList.push('<span class="title">' + value['Title'] + '</span>');
+                        if (value['Description']) {
+                            VimeoList.push('<span class="description">' + value['Description'] + '</span>');
+                        }
+                        VimeoList.push('</a>');
+                    });
+                }
+            </script>
+        </div>
+    </body>
+</html>
