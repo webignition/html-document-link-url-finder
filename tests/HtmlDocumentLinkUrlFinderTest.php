@@ -366,6 +366,25 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            'badly-formed markup with JS concatenated URLs' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('badly-formed-js-urls'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                ]),
+                'expectedResult' => [
+                    [
+                        'url' => 'http://example.com/',
+                        'element' => '<a href="http://example.com/">Example no subdomain</a>',
+                    ],
+                    [
+                        'url' => 'http://example.com/foo.js',
+                        'element' => '<script type="text/javascript" src="/foo.js"></script>',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -497,6 +516,19 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     'http://example.com/assets/css/main.css',
                 ],
             ],
+            'badly-formed markup with JS concatenated URLs' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('badly-formed-js-urls'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                ]),
+                'expectedResult' => [
+                    'http://example.com/',
+                    'http://example.com/foo.js',
+                ],
+            ],
         ];
     }
 
@@ -514,7 +546,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
         );
 
         $result = $this->htmlDocumentLinkUrlFinder->getUniqueUrls();
-
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -553,6 +584,20 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => [
                     'http://example.com/foo',
                     'http://example.com/',
+                ],
+            ],
+            'badly-formed markup with JS concatenated URLs' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('badly-formed-js-urls'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                    Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
+                ]),
+                'expectedResult' => [
+                    'http://example.com/',
+                    'http://example.com/foo.js',
                 ],
             ],
         ];
@@ -667,6 +712,19 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     '<a href="#">Empty fragment only</a>',
                     '<a href="http://www.youtube.com/example"><img src="/images/youtube.png"></a>',
                     '<img src="/images/youtube.png">',
+                ],
+            ],
+            'badly-formed markup with JS concatenated URLs' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('badly-formed-js-urls'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                ]),
+                'expectedResult' => [
+                    '<a href="http://example.com/">Example no subdomain</a>',
+                    '<script type="text/javascript" src="/foo.js"></script>',
                 ],
             ],
         ];
