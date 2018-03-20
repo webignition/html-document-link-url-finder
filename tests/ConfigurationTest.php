@@ -2,7 +2,10 @@
 
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
+use Mockery\Mock;
+use Psr\Http\Message\ResponseInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
+use webignition\WebResource\WebPage\InvalidContentTypeException;
 use webignition\WebResource\WebPage\WebPage;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -166,7 +169,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param WebPage $source
      * @param WebPage $expectedSource
      */
-    public function testSource(WebPage $source, WebPage $expectedSource)
+    public function testSourceFoo(WebPage $source, WebPage $expectedSource)
     {
         $this->assertFalse($this->configuration->requiresReset());
 
@@ -178,10 +181,20 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     * @throws InvalidContentTypeException
      */
     public function sourceDataProvider()
     {
-        $webPage = new WebPage();
+        /* @var ResponseInterface|Mock $response */
+        $response = \Mockery::mock(ResponseInterface::class);
+        $response
+            ->shouldReceive('getHeader')
+            ->with('content-type')
+            ->andReturn([
+                'text/html',
+            ]);
+
+        $webPage = new WebPage($response);
 
         return [
             'default' => [
@@ -283,6 +296,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      */
     public function hasSourceContentDataProvider()
     {
+        $emptyWebPage = \Mockery::mock(WebPage::class);
+        $emptyWebPage
+            ->shouldReceive('getContent')
+            ->andReturn('');
+
         $webPage = \Mockery::mock(WebPage::class);
         $webPage
             ->shouldReceive('getContent')
@@ -294,7 +312,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'expectedHasSourceContent' => false,
             ],
             'empty source' => [
-                'source' => new WebPage(),
+                'source' => $emptyWebPage,
                 'expectedHasSourceContent' => false,
             ],
             'non-empty source' => [
