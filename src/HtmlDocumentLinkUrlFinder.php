@@ -2,17 +2,12 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
+use QueryPath\Exception as QueryPathException;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Url\ScopeComparer;
 use webignition\Url\Url;
 
-/**
- * Finds links in an HTML Document
- *
- * @package webignition\HtmlDocumentLinkUrlFinder
- *
- */
 class HtmlDocumentLinkUrlFinder
 {
     const HREF_ATTRIBUTE_NAME  = 'href';
@@ -20,9 +15,12 @@ class HtmlDocumentLinkUrlFinder
 
     const BASE_ELEMENT_NAME = 'base';
 
-    private $ignoredElementNames = array(
+    /**
+     * @var string[]
+     */
+    private $ignoredElementNames = [
         self::BASE_ELEMENT_NAME
-    );
+    ];
 
     /**
      * @var \DOMDocument
@@ -82,8 +80,9 @@ class HtmlDocumentLinkUrlFinder
     }
 
     /**
+     * @return string[]
      *
-     * @return array
+     * @throws QueryPathException
      */
     public function getUniqueUrls()
     {
@@ -92,7 +91,7 @@ class HtmlDocumentLinkUrlFinder
         }
 
         $allUrls = $this->getAllUrls();
-        $urls = array();
+        $urls = [];
 
         foreach ($allUrls as $url) {
             if ($this->getConfiguration()->getIgnoreFragmentInUrlComparison()) {
@@ -125,8 +124,9 @@ class HtmlDocumentLinkUrlFinder
     }
 
     /**
+     * @return string[]
      *
-     * @return array
+     * @throws QueryPathException
      */
     public function getAllUrls()
     {
@@ -138,7 +138,7 @@ class HtmlDocumentLinkUrlFinder
             return [];
         }
 
-        $urls = array();
+        $urls = [];
         $elements = $this->getRawElements();
 
         foreach ($elements as $element) {
@@ -155,6 +155,8 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return array
+     *
+     * @throws QueryPathException
      */
     public function getAll()
     {
@@ -169,13 +171,13 @@ class HtmlDocumentLinkUrlFinder
         $urls = $this->getAllUrls();
         $elements = $this->getElements();
 
-        $result = array();
+        $result = [];
 
         foreach ($urls as $index => $url) {
-            $result[] = array(
+            $result[] = [
                 'url' => $url,
                 'element' => $elements[$index]
-            );
+            ];
         }
 
         return $result;
@@ -190,6 +192,8 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return array
+     *
+     * @throws QueryPathException
      */
     public function getElements()
     {
@@ -201,7 +205,7 @@ class HtmlDocumentLinkUrlFinder
             return [];
         }
 
-        $elements = array();
+        $elements = [];
         $rawElements = $this->getRawElements();
 
         foreach ($rawElements as $element) {
@@ -213,11 +217,13 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return array
+     *
+     * @throws QueryPathException
      */
     private function getRawElements()
     {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
-        $elements = array();
+        $elements = [];
 
         foreach ($elementsWithUrlAttributes as $element) {
             $url = $this->getUrlAttributeFromElement($element);
@@ -283,7 +289,9 @@ class HtmlDocumentLinkUrlFinder
     }
 
     /**
-     * @return boolean
+     * @return bool
+     *
+     * @throws QueryPathException
      */
     public function hasUrls()
     {
@@ -292,6 +300,8 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMDocument
+     *
+     * @throws QueryPathException
      */
     private function sourceDOM()
     {
@@ -326,7 +336,7 @@ class HtmlDocumentLinkUrlFinder
      */
     private function getElementsWithinElement(\DOMElement $element)
     {
-        $elements = array();
+        $elements = [];
 
         foreach ($element->childNodes as $childNode) {
             /* @var $childNode \DOMNode */
@@ -344,11 +354,13 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return array
+     *
+     * @throws QueryPathException
      */
     private function getElementsWithUrlAttributes()
     {
         if (is_null($this->elementsWithUrlAttributes)) {
-            $this->elementsWithUrlAttributes = array();
+            $this->elementsWithUrlAttributes = [];
             $elementScope = $this->getConfiguration()->getElementScope();
 
             $elements = empty($elementScope)
@@ -368,6 +380,8 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMElement[]
+     *
+     * @throws QueryPathException
      */
     private function getAllElements()
     {
@@ -395,6 +409,8 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMElement[]
+     *
+     * @throws QueryPathException
      */
     private function getScopedElements()
     {
@@ -510,6 +526,11 @@ class HtmlDocumentLinkUrlFinder
             : true;
     }
 
+    /**
+     * @return string
+     *
+     * @throws QueryPathException
+     */
     private function getBaseUrl()
     {
         if (is_null($this->baseUrl)) {
@@ -531,6 +552,8 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMElement|null
+     *
+     * @throws QueryPathException
      */
     private function getBaseElement()
     {

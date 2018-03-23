@@ -200,9 +200,6 @@ class Configuration
         return $this->requiresReset;
     }
 
-    /**
-     * @return Configuration
-     */
     public function clearReset()
     {
         $this->requiresReset = false;
