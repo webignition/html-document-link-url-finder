@@ -5,7 +5,8 @@ namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 use Mockery\Mock;
 use Psr\Http\Message\ResponseInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
-use webignition\WebResource\WebPage\InvalidContentTypeException;
+use webignition\InternetMediaType\Parser\ParseException as InternetMediaTypeParseException;
+use webignition\WebResource\Exception\InvalidContentTypeException;
 use webignition\WebResource\WebPage\WebPage;
 
 class ConfigurationTest extends \PHPUnit_Framework_TestCase
@@ -181,7 +182,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @return array
+     *
      * @throws InvalidContentTypeException
+     * @throws InternetMediaTypeParseException
      */
     public function sourceDataProvider()
     {
