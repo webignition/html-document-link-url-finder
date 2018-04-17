@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84f2a65f918ade338a0e4fdc887b429d",
+    "content-hash": "0259b2a290b13f25d45ea2e6811e7d7b",
     "packages": [
         {
             "name": "etechnika/idna-convert",
@@ -542,16 +542,16 @@
         },
         {
             "name": "webignition/url",
-            "version": "1.9.20",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/url.git",
-                "reference": "a4e6044bc6786a59b37d2508e87b540b5074b09a"
+                "reference": "f700fe0bf1b62230313152306d347f37c52480bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/url/zipball/a4e6044bc6786a59b37d2508e87b540b5074b09a",
-                "reference": "a4e6044bc6786a59b37d2508e87b540b5074b09a",
+                "url": "https://api.github.com/repos/webignition/url/zipball/f700fe0bf1b62230313152306d347f37c52480bd",
+                "reference": "f700fe0bf1b62230313152306d347f37c52480bd",
                 "shasum": ""
             },
             "require": {
@@ -587,36 +587,36 @@
             "keywords": [
                 "url"
             ],
-            "time": "2018-03-14T17:25:14+00:00"
+            "time": "2018-03-14T17:19:34+00:00"
         },
         {
             "name": "webignition/web-page-model",
-            "version": "3.0",
+            "version": "3.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "3debf04c969819e72cbb703ae8d0813ef05eae24"
+                "reference": "56427d522c81ebdf59572dfc431f6b02610d3d43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/3debf04c969819e72cbb703ae8d0813ef05eae24",
-                "reference": "3debf04c969819e72cbb703ae8d0813ef05eae24",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/56427d522c81ebdf59572dfc431f6b02610d3d43",
+                "reference": "56427d522c81ebdf59572dfc431f6b02610d3d43",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6.0",
                 "querypath/querypath": ">=3.0.0",
-                "webignition/character-set-list": ">=0.2,<1.0",
-                "webignition/internet-media-type": ">=1.2,<2.0",
-                "webignition/internet-media-type-interface": ">=0.1,<1",
-                "webignition/web-resource-interfaces": ">=0.8,<1",
-                "webignition/web-resource-model": ">=3.0.1,<4"
+                "webignition/character-set-list": "^0.2",
+                "webignition/internet-media-type": "^1.2",
+                "webignition/internet-media-type-interface": "^0.1",
+                "webignition/web-resource-interfaces": ">=0.1,<1",
+                "webignition/web-resource-model": ">=3.2.1,<4"
             },
             "require-dev": {
-                "mockery/mockery": "~1.0",
-                "phpunit/phpunit": "~5.0",
-                "squizlabs/php_codesniffer": "3.*",
-                "webignition/web-resource-testing-tools": ">=0.2,<1"
+                "mockery/mockery": "^1",
+                "phpunit/phpunit": "^5",
+                "squizlabs/php_codesniffer": "^3",
+                "webignition/web-resource-testing-tools": "^0.2"
             },
             "type": "library",
             "autoload": {
@@ -640,20 +640,20 @@
                 "model",
                 "webpage"
             ],
-            "time": "2018-03-23T12:54:23+00:00"
+            "time": "2018-03-28T11:34:19+00:00"
         },
         {
             "name": "webignition/web-resource-interfaces",
-            "version": "0.8",
+            "version": "0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-interfaces.git",
-                "reference": "e63c525c6427b350ed74b683cb8a2484d9419748"
+                "reference": "7e734ccbfde87ba7dd1b4b0ab3b1a5ad77cf5e3a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-resource-interfaces/zipball/e63c525c6427b350ed74b683cb8a2484d9419748",
-                "reference": "e63c525c6427b350ed74b683cb8a2484d9419748",
+                "url": "https://api.github.com/repos/webignition/web-resource-interfaces/zipball/7e734ccbfde87ba7dd1b4b0ab3b1a5ad77cf5e3a",
+                "reference": "7e734ccbfde87ba7dd1b4b0ab3b1a5ad77cf5e3a",
                 "shasum": ""
             },
             "require": {
@@ -686,34 +686,34 @@
                 "psr-7",
                 "web-page"
             ],
-            "time": "2018-03-22T14:35:36+00:00"
+            "time": "2018-03-29T17:08:09+00:00"
         },
         {
             "name": "webignition/web-resource-model",
-            "version": "3.0.1",
+            "version": "3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-resource-model.git",
-                "reference": "4509464b3cf926d0427bbebd3bf2972055f29efc"
+                "reference": "2a3f75dac635ef24d80e90c831fa9e7f63432fb1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/4509464b3cf926d0427bbebd3bf2972055f29efc",
-                "reference": "4509464b3cf926d0427bbebd3bf2972055f29efc",
+                "url": "https://api.github.com/repos/webignition/web-resource-model/zipball/2a3f75dac635ef24d80e90c831fa9e7f63432fb1",
+                "reference": "2a3f75dac635ef24d80e90c831fa9e7f63432fb1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.6.0",
-                "psr/http-message": "~1.0",
-                "webignition/internet-media-type": ">=1.2,<2.0",
-                "webignition/internet-media-type-interface": ">=0.1,<1",
-                "webignition/web-resource-interfaces": ">=0.8,<1"
+                "psr/http-message": "^1",
+                "webignition/internet-media-type": "^1.2",
+                "webignition/internet-media-type-interface": "^0.1",
+                "webignition/web-resource-interfaces": ">=0.11,<1"
             },
             "require-dev": {
-                "mockery/mockery": "~1.0",
-                "phpunit/phpunit": "~5.0",
-                "squizlabs/php_codesniffer": "3.*",
-                "webignition/web-resource-testing-tools": ">=0.1,<1"
+                "mockery/mockery": "^1",
+                "phpunit/phpunit": "^5",
+                "squizlabs/php_codesniffer": "^3",
+                "webignition/web-resource-testing-tools": "^0.1"
             },
             "type": "library",
             "autoload": {
@@ -738,7 +738,7 @@
                 "psr-7",
                 "web"
             ],
-            "time": "2018-03-23T12:19:11+00:00"
+            "time": "2018-03-29T17:26:38+00:00"
         },
         {
             "name": "xrstf/ip-utils",
@@ -2167,16 +2167,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v3.4.6",
+            "version": "v3.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "6af42631dcf89e9c616242c900d6c52bd53bd1bb"
+                "reference": "a42f9da85c7c38d59f5e53f076fe81a091f894d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/6af42631dcf89e9c616242c900d6c52bd53bd1bb",
-                "reference": "6af42631dcf89e9c616242c900d6c52bd53bd1bb",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/a42f9da85c7c38d59f5e53f076fe81a091f894d0",
+                "reference": "a42f9da85c7c38d59f5e53f076fe81a091f894d0",
                 "shasum": ""
             },
             "require": {
@@ -2221,7 +2221,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2018-02-16T09:50:28+00:00"
+            "time": "2018-04-03T05:14:20+00:00"
         },
         {
             "name": "webmozart/assert",
