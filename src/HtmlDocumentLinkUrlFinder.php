@@ -13,15 +13,6 @@ class HtmlDocumentLinkUrlFinder
     const HREF_ATTRIBUTE_NAME  = 'href';
     const SRC_ATTRIBUTE_NAME  = 'src';
 
-    const BASE_ELEMENT_NAME = 'base';
-
-    /**
-     * @var string[]
-     */
-    private $ignoredElementNames = [
-        self::BASE_ELEMENT_NAME
-    ];
-
     /**
      * @var \DOMDocument
      */
@@ -46,6 +37,16 @@ class HtmlDocumentLinkUrlFinder
      * @var Configuration
      */
     private $configuration = null;
+
+    /**
+     * @var ElementExcluder
+     */
+    private $elementExcluder;
+
+    public function __construct()
+    {
+        $this->elementExcluder = new ElementExcluder();
+    }
 
     /**
      * @param Configuration $configuration
@@ -369,7 +370,7 @@ class HtmlDocumentLinkUrlFinder
 
             foreach ($elements as $element) {
                 /* @var $element \DOMElement */
-                if (!$this->isIgnoredElement($element) && $this->hasUrlAttribute($element)) {
+                if (!$this->elementExcluder->isExcluded($element) && $this->hasUrlAttribute($element)) {
                     $this->elementsWithUrlAttributes[] = $element;
                 }
             }
@@ -438,16 +439,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $elements;
-    }
-
-    /**
-     * @param \DOMElement $element
-     *
-     * @return boolean
-     */
-    private function isIgnoredElement(\DOMElement $element)
-    {
-        return in_array($element->nodeName, $this->ignoredElementNames);
     }
 
     /**
