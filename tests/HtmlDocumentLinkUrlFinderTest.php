@@ -388,6 +388,25 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
             ],
+            'ignore link rel=dns-prefetch' => [
+                'configuration' => new Configuration([
+                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
+                        $this->loadHtmlDocumentFixture('link-rel-equals-dns-prefetch'),
+                        'utf-8'
+                    ),
+                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
+                ]),
+                'expectedResult' => [
+                    [
+                        'url' => 'http://example.com/main.css',
+                        'element' => '<link href="main.css" rel="stylesheet">',
+                    ],
+                    [
+                        'url' => 'http://example.com/foo',
+                        'element' => '<a href="http://example.com/foo">A</a>',
+                    ],
+                ],
+            ],
         ];
     }
 
