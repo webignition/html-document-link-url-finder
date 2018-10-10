@@ -8,7 +8,7 @@ use webignition\HtmlDocumentLinkUrlFinder\Configuration;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\WebPage\WebPage;
 
-class HtmlDocumentLinkUrlFinderTest extends \PHPUnit_Framework_TestCase
+class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var HtmlDocumentLinkUrlFinder
