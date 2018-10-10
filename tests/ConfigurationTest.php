@@ -4,10 +4,12 @@ namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use Mockery\Mock;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
-use webignition\InternetMediaType\Parser\ParseException as InternetMediaTypeParseException;
 use webignition\WebResource\Exception\InvalidContentTypeException;
 use webignition\WebResource\WebPage\WebPage;
+use webignition\WebResourceInterfaces\WebPageInterface;
 
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
@@ -63,7 +65,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function createDataProvider(): array
     {
-        $webPage = \Mockery::mock(WebPage::class);
+        $webPage = \Mockery::mock(WebPageInterface::class);
 
         return [
             'default' => [
@@ -164,7 +166,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @param WebPage $source
      * @param WebPage $expectedSource
      */
-    public function testSourceFoo(WebPage $source, WebPage $expectedSource)
+    public function testSetSourceGetSource(WebPage $source, WebPage $expectedSource)
     {
         $this->assertFalse($this->configuration->requiresReset());
 
@@ -178,20 +180,26 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @return array
      *
      * @throws InvalidContentTypeException
-     * @throws InternetMediaTypeParseException
      */
     public function sourceDataProvider(): array
     {
+        $responseBody = \Mockery::mock(StreamInterface::class);
+        $responseBody
+            ->shouldReceive('__toString')
+            ->andReturn('');
+
         /* @var ResponseInterface|Mock $response */
         $response = \Mockery::mock(ResponseInterface::class);
         $response
-            ->shouldReceive('getHeader')
+            ->shouldReceive('getHeaderLine')
             ->with('content-type')
-            ->andReturn([
-                'text/html',
-            ]);
+            ->andReturn('text/html');
 
-        $webPage = new WebPage($response);
+        $response
+            ->shouldReceive('getBody')
+            ->andReturn($responseBody);
+
+        $webPage = WebPage::createFromResponse(\Mockery::mock(UriInterface::class), $response);
 
         return [
             'default' => [

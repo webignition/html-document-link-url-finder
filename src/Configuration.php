@@ -3,7 +3,7 @@
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
 use webignition\NormalisedUrl\NormalisedUrl;
-use webignition\WebResource\WebPage\WebPage;
+use webignition\WebResourceInterfaces\WebPageInterface;
 
 class Configuration
 {
@@ -22,7 +22,7 @@ class Configuration
     private $requiresReset = false;
 
     /**
-     * @var WebPage
+     * @var WebPageInterface
      */
     private $source = null;
 
@@ -141,13 +141,13 @@ class Configuration
         return $this->ignoreFragmentInUrlComparison;
     }
 
-    public function setSource(WebPage $webPage)
+    public function setSource(WebPageInterface $webPage)
     {
         $this->source = $webPage;
         $this->requiresReset = true;
     }
 
-    public function getSource(): ?WebPage
+    public function getSource(): ?WebPageInterface
     {
         return $this->source;
     }

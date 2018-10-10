@@ -2,7 +2,6 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
-use QueryPath\Exception as QueryPathException;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Url\ScopeComparer;
@@ -67,8 +66,6 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return string[]
-     *
-     * @throws QueryPathException
      */
     public function getUniqueUrls(): array
     {
@@ -106,8 +103,6 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return string[]
-     *
-     * @throws QueryPathException
      */
     public function getAllUrls(): array
     {
@@ -134,11 +129,6 @@ class HtmlDocumentLinkUrlFinder
         return $urls;
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     public function getAll(): array
     {
         if ($this->getConfiguration()->requiresReset()) {
@@ -171,11 +161,6 @@ class HtmlDocumentLinkUrlFinder
         $this->getConfiguration()->clearReset();
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     public function getElements(): array
     {
         if ($this->getConfiguration()->requiresReset()) {
@@ -196,11 +181,6 @@ class HtmlDocumentLinkUrlFinder
         return $elements;
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     private function getRawElements(): array
     {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
@@ -253,21 +233,11 @@ class HtmlDocumentLinkUrlFinder
         );
     }
 
-    /**
-     * @return bool
-     *
-     * @throws QueryPathException
-     */
     public function hasUrls(): bool
     {
         return count($this->getUniqueUrls()) > 0;
     }
 
-    /**
-     * @return \DOMDocument
-     *
-     * @throws QueryPathException
-     */
     private function sourceDOM(): \DOMDocument
     {
         if (is_null($this->sourceDOM)) {
@@ -313,11 +283,6 @@ class HtmlDocumentLinkUrlFinder
         return $elements;
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     private function getElementsWithUrlAttributes(): array
     {
         if (is_null($this->elementsWithUrlAttributes)) {
@@ -341,8 +306,6 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMElement[]
-     *
-     * @throws QueryPathException
      */
     private function getAllElements(): array
     {
@@ -370,8 +333,6 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMElement[]
-     *
-     * @throws QueryPathException
      */
     private function getScopedElements(): array
     {
@@ -467,11 +428,6 @@ class HtmlDocumentLinkUrlFinder
             : true;
     }
 
-    /**
-     * @return string
-     *
-     * @throws QueryPathException
-     */
     private function getBaseUrl(): string
     {
         if (is_null($this->baseUrl)) {
@@ -493,8 +449,6 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return \DOMElement|null
-     *
-     * @throws QueryPathException
      */
     private function getBaseElement(): ?\DOMElement
     {

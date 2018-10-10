@@ -3,7 +3,6 @@
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use Mockery\MockInterface;
-use QueryPath\Exception as QueryPathException;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
 use webignition\WebResource\WebPage\WebPage;
@@ -29,8 +28,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @param Configuration $configuration
      * @param array $expectedResult
-     *
-     * @throws QueryPathException
      */
     public function testGetAll(Configuration $configuration, array $expectedResult)
     {
@@ -412,8 +409,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @param Configuration $configuration
      * @param array $expectedResult
-     *
-     * @throws QueryPathException
      */
     public function testGetAllUrls(Configuration $configuration, array $expectedResult)
     {
@@ -555,8 +550,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @param Configuration $configuration
      * @param array $expectedResult
-     *
-     * @throws QueryPathException
      */
     public function testGetUniqueUrls(Configuration $configuration, array $expectedResult)
     {
@@ -625,8 +618,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @param Configuration $configuration
      * @param bool $expectedHasUrls
-     *
-     * @throws QueryPathException
      */
     public function testHasUniqueUrls(Configuration $configuration, bool $expectedHasUrls)
     {
@@ -678,8 +669,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @param Configuration $configuration
      * @param array $expectedResult
-     *
-     * @throws QueryPathException
      */
     public function testGetElements(Configuration $configuration, array $expectedResult)
     {
