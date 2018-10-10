@@ -2,21 +2,16 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
-use QueryPath\Exception as QueryPathException;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Url\ScopeComparer;
 use webignition\Url\Url;
+use webignition\WebResource\WebPage\WebPage;
 
 class HtmlDocumentLinkUrlFinder
 {
     const HREF_ATTRIBUTE_NAME  = 'href';
     const SRC_ATTRIBUTE_NAME  = 'src';
-
-    /**
-     * @var \DOMDocument
-     */
-    private $sourceDOM = null;
 
     /**
      * @var array
@@ -67,12 +62,10 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return string[]
-     *
-     * @throws QueryPathException
      */
     public function getUniqueUrls(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
@@ -80,7 +73,7 @@ class HtmlDocumentLinkUrlFinder
         $urls = [];
 
         foreach ($allUrls as $url) {
-            if ($this->getConfiguration()->getIgnoreFragmentInUrlComparison()) {
+            if ($this->configuration->getIgnoreFragmentInUrlComparison()) {
                 $url = $this->getUniquenessComparisonUrl($url);
             }
 
@@ -106,16 +99,14 @@ class HtmlDocumentLinkUrlFinder
 
     /**
      * @return string[]
-     *
-     * @throws QueryPathException
      */
     public function getAllUrls(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
-        if (!$this->getConfiguration()->hasSourceContent()) {
+        if (!$this->configuration->hasSourceContent()) {
             return [];
         }
 
@@ -123,8 +114,8 @@ class HtmlDocumentLinkUrlFinder
         $elements = $this->getRawElements();
 
         foreach ($elements as $element) {
-            $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
-                $this->getUrlAttributeFromElement($element),
+            $discoveredUrl = new NormalisedUrl($this->createAbsoluteUrlDeriver(
+                $this->getUrlValueFromElement($element),
                 $this->getBaseUrl()
             )->getAbsoluteUrl());
 
@@ -134,18 +125,13 @@ class HtmlDocumentLinkUrlFinder
         return $urls;
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     public function getAll(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
-        if (!$this->getConfiguration()->hasSourceContent()) {
+        if (!$this->configuration->hasSourceContent()) {
             return [];
         }
 
@@ -167,22 +153,16 @@ class HtmlDocumentLinkUrlFinder
     private function reset()
     {
         $this->elementsWithUrlAttributes = null;
-        $this->sourceDOM = null;
-        $this->getConfiguration()->clearReset();
+        $this->configuration->clearReset();
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     public function getElements(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
-        if (!$this->getConfiguration()->hasSourceContent()) {
+        if (!$this->configuration->hasSourceContent()) {
             return [];
         }
 
@@ -190,27 +170,23 @@ class HtmlDocumentLinkUrlFinder
         $rawElements = $this->getRawElements();
 
         foreach ($rawElements as $element) {
-            $elements[] = trim($this->sourceDOM()->saveHtml($element));
+            /* @var \DOMElement $element */
+            $elements[] = trim($element->ownerDocument->saveHTML($element));
         }
 
         return $elements;
     }
 
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     private function getRawElements(): array
     {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
         $elements = [];
 
         foreach ($elementsWithUrlAttributes as $element) {
-            $url = $this->getUrlAttributeFromElement($element);
-            $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
+            $url = $this->getUrlValueFromElement($element);
+            $discoveredUrl = new NormalisedUrl($this->createAbsoluteUrlDeriver(
                 $url,
-                (string)$this->getConfiguration()->getSourceUrl()
+                (string)$this->configuration->getSourceUrl()
             )->getAbsoluteUrl());
 
             if ($this->isUrlInScope($discoveredUrl)) {
@@ -221,7 +197,7 @@ class HtmlDocumentLinkUrlFinder
         return $elements;
     }
 
-    private function getUrlAttributeFromElement(\DOMElement $element): string
+    private function getUrlValueFromElement(\DOMElement $element): string
     {
         if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
             return $element->getAttribute(self::HREF_ATTRIBUTE_NAME);
@@ -232,11 +208,11 @@ class HtmlDocumentLinkUrlFinder
 
     private function isUrlInScope(Url $discoveredUrl): bool
     {
-        if (!$this->getConfiguration()->hasUrlScope()) {
+        if (!$this->configuration->hasUrlScope()) {
             return true;
         }
 
-        foreach ($this->getConfiguration()->getUrlScope() as $scopeUrl) {
+        foreach ($this->configuration->getUrlScope() as $scopeUrl) {
             if ($this->getUrlScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
                 return true;
             }
@@ -245,7 +221,7 @@ class HtmlDocumentLinkUrlFinder
         return false;
     }
 
-    private function getAbsoluteUrlDeriver(string $nonAbsoluteUrl, string $absoluteUrl): AbsoluteUrlDeriver
+    private function createAbsoluteUrlDeriver(string $nonAbsoluteUrl, string $absoluteUrl): AbsoluteUrlDeriver
     {
         return new AbsoluteUrlDeriver(
             $nonAbsoluteUrl,
@@ -253,162 +229,94 @@ class HtmlDocumentLinkUrlFinder
         );
     }
 
-    /**
-     * @return bool
-     *
-     * @throws QueryPathException
-     */
     public function hasUrls(): bool
     {
         return count($this->getUniqueUrls()) > 0;
     }
 
-    /**
-     * @return \DOMDocument
-     *
-     * @throws QueryPathException
-     */
-    private function sourceDOM(): \DOMDocument
-    {
-        if (is_null($this->sourceDOM)) {
-            $this->sourceDOM = new \DOMDocument();
-            $this->sourceDOM->recover = true;
-            $this->sourceDOM->strictErrorChecking = false;
-            $this->sourceDOM->validateOnParse = false;
-
-            $source = $this->getConfiguration()->getSource();
-
-            $characterSet = $source->getCharacterSet();
-            $content = trim($source->getContent());
-
-            if (!empty($characterSet)) {
-                @$this->sourceDOM->loadHTML(
-                    '<?xml encoding="'
-                    . $this->getConfiguration()->getSource()->getCharacterSet()
-                    . '">' . $content
-                );
-            } else {
-                @$this->sourceDOM->loadHTML($content);
-            }
-        }
-
-        return $this->sourceDOM;
-    }
-
-    private function getElementsWithinElement(\DOMElement $element): array
-    {
-        $elements = [];
-
-        foreach ($element->childNodes as $childNode) {
-            /* @var $childNode \DOMNode */
-            if ($childNode->nodeType == XML_ELEMENT_NODE) {
-                /* @var $childNode \DOMElement */
-                $elements[] = $childNode;
-                if ($childNode->hasChildNodes()) {
-                    $elements = array_merge($elements, $this->getElementsWithinElement($childNode));
-                }
-            }
-        }
-
-        return $elements;
-    }
-
-    /**
-     * @return array
-     *
-     * @throws QueryPathException
-     */
     private function getElementsWithUrlAttributes(): array
     {
-        if (is_null($this->elementsWithUrlAttributes)) {
-            $this->elementsWithUrlAttributes = [];
-            $elementScope = $this->getConfiguration()->getElementScope();
+        if (empty($this->elementsWithUrlAttributes)) {
+            $elements = $this->findElementsWithUrlAttributes();
+            $filteredElements = $this->filterElements($elements);
 
-            $elements = empty($elementScope)
-                ? $this->getAllElements()
-                : $this->getScopedElements();
-
-            foreach ($elements as $element) {
-                /* @var $element \DOMElement */
-                if (!$this->elementExcluder->isExcluded($element) && $this->hasUrlAttribute($element)) {
-                    $this->elementsWithUrlAttributes[] = $element;
-                }
-            }
+            $this->elementsWithUrlAttributes = $filteredElements;
         }
 
         return $this->elementsWithUrlAttributes;
     }
 
     /**
-     * @return \DOMElement[]
+     * @param \DOMElement[] $elements
      *
-     * @throws QueryPathException
+     * @return \DOMElement[]
      */
-    private function getAllElements(): array
+    private function filterElements(array $elements): array
     {
-        $attributeScopeName = $this->getConfiguration()->getAttributeScopeName();
-        $attributeScopeValue = $this->getConfiguration()->getAttributeScopeValue();
-        $hasAttributeScope = !empty($attributeScopeName);
+        $filteredElements = [];
 
-        $elements = $this->getElementsWithinElement($this->sourceDOM()->documentElement);
+        foreach ($elements as $element) {
+            $includeElement = $this->isElementInNameScope($element);
+            $includeElement = $includeElement && !$this->elementExcluder->isExcluded($element);
+            $includeElement = $includeElement && $this->hasUrlAttribute($element);
+            $includeElement = $includeElement && $this->isElementInAttributeScope($element);
 
-        if ($hasAttributeScope) {
-            $attributeScopedElements = [];
-
-            foreach ($elements as $element) {
-                /* @var $element \DOMElement */
-                if ($element->getAttribute($attributeScopeName) == $attributeScopeValue) {
-                    $attributeScopedElements[] = $element;
-                }
+            if ($includeElement) {
+                $filteredElements[] = $element;
             }
-
-            return $attributeScopedElements;
         }
 
-        return $elements;
+        return $filteredElements;
     }
 
-    /**
-     * @return \DOMElement[]
-     *
-     * @throws QueryPathException
-     */
-    private function getScopedElements(): array
+    private function isElementInNameScope(\DOMElement $element): bool
     {
-        $attributeScopeName = $this->getConfiguration()->getAttributeScopeName();
-        $attributeScopeValue = $this->getConfiguration()->getAttributeScopeValue();
-        $hasAttributeScope = !empty($attributeScopeName);
-        $elements = [];
+        $elementScope = $this->configuration->getElementScope();
 
-        foreach ($this->getConfiguration()->getElementScope() as $tagName) {
-            $domNodeList = $this->sourceDOM()->getElementsByTagName($tagName);
-            $elementsByTagName = [];
-
-            foreach ($domNodeList as $node) {
-                /* @var $node \DOMElement */
-                $includeNode = $hasAttributeScope
-                    ? $node->getAttribute($attributeScopeName) == $attributeScopeValue
-                    : true;
-
-                if ($includeNode) {
-                    $elementsByTagName[] = $node;
-                }
-            }
-
-            $elements = array_merge($elements, $elementsByTagName);
+        if (empty($elementScope)) {
+            return true;
         }
 
-        return $elements;
+        $isInScope = false;
+
+        foreach ($elementScope as $nodeName) {
+            /* @var \DOMElement $element */
+            if ($element->nodeName === $nodeName) {
+                $isInScope = true;
+            }
+        }
+
+        return $isInScope;
+    }
+
+    private function isElementInAttributeScope(\DOMElement $element): bool
+    {
+        $attributeScopeName = $this->configuration->getAttributeScopeName();
+        $attributeScopeValue = $this->configuration->getAttributeScopeValue();
+        $hasAttributeScope = !empty($attributeScopeName);
+
+        if (!$hasAttributeScope) {
+            return true;
+        }
+
+        return $element->getAttribute($attributeScopeName) == $attributeScopeValue;
+    }
+
+
+    private function findElementsWithUrlAttributes(): array
+    {
+        /* @var WebPage $webPage */
+        $webPage = $this->configuration->getSource();
+
+        $inspector = $webPage->getInspector();
+
+        return $inspector->querySelectorAll('[href], [src]');
     }
 
     private function hasUrlAttribute(\DOMElement $element): bool
     {
         $hasHrefAttribute = $element->hasAttribute(self::HREF_ATTRIBUTE_NAME);
         $hasSrcAttribute = $element->hasAttribute(self::SRC_ATTRIBUTE_NAME);
-
-        if (!$hasHrefAttribute && !$hasSrcAttribute) {
-            return false;
-        }
 
         $attributeValue = '';
 
@@ -462,52 +370,22 @@ class HtmlDocumentLinkUrlFinder
 
     private function hasNonEmptyUrlAttribute(string $attributeValue): bool
     {
-        return $this->getConfiguration()->getIgnoreEmptyHref()
+        return $this->configuration->getIgnoreEmptyHref()
             ? !empty(trim($attributeValue))
             : true;
     }
 
-    /**
-     * @return string
-     *
-     * @throws QueryPathException
-     */
     private function getBaseUrl(): string
     {
         if (is_null($this->baseUrl)) {
-            $baseElement = $this->getBaseElement();
-            if (is_null($baseElement)) {
-                $this->baseUrl = (string)$this->getConfiguration()->getSourceUrl();
-            } else {
-                $absoluteUrlDeriver = new AbsoluteUrlDeriver(
-                    $baseElement->getAttribute('href'),
-                    (string)$this->getConfiguration()->getSourceUrl()
-                );
+            /* @var WebPage $webPage */
+            $webPage = $this->configuration->getSource();
 
-                $this->baseUrl = (string)$absoluteUrlDeriver->getAbsoluteUrl();
-            }
+            $webPageBaseUrl = $webPage->getBaseUrl();
+
+            $this->baseUrl = (empty($webPageBaseUrl)) ? $this->configuration->getSourceUrl() : $webPageBaseUrl;
         }
 
         return $this->baseUrl;
-    }
-
-    /**
-     * @return \DOMElement|null
-     *
-     * @throws QueryPathException
-     */
-    private function getBaseElement(): ?\DOMElement
-    {
-        $baseElements = $this->sourceDOM()->getElementsByTagName('base');
-        if ($baseElements->length !== 1) {
-            return null;
-        }
-
-        $baseElement = $baseElements->item(0);
-        if (!$baseElement->hasAttribute('href')) {
-            return null;
-        }
-
-        return $baseElement;
     }
 }

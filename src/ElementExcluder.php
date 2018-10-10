@@ -4,8 +4,6 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 
 class ElementExcluder
 {
-    const BASE_ELEMENT_NAME = 'base';
-
     /**
      * @var array
      */
