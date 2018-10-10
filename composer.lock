@@ -711,16 +711,16 @@
         },
         {
             "name": "webignition/web-page-inspector",
-            "version": "0.3",
+            "version": "0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-inspector.git",
-                "reference": "58b3136855085bdb8ef6348c50dfb391b8bd5fdf"
+                "reference": "80c6625fd33d33e6fb4218cf7989a88735bd8c84"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-inspector/zipball/58b3136855085bdb8ef6348c50dfb391b8bd5fdf",
-                "reference": "58b3136855085bdb8ef6348c50dfb391b8bd5fdf",
+                "url": "https://api.github.com/repos/webignition/web-page-inspector/zipball/80c6625fd33d33e6fb4218cf7989a88735bd8c84",
+                "reference": "80c6625fd33d33e6fb4218cf7989a88735bd8c84",
                 "shasum": ""
             },
             "require": {
@@ -758,7 +758,7 @@
                 "inspector",
                 "webpage"
             ],
-            "time": "2018-10-09T13:59:13+00:00"
+            "time": "2018-10-10T16:06:08+00:00"
         },
         {
             "name": "webignition/web-page-model",
