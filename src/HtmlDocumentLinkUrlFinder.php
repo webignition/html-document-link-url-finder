@@ -70,7 +70,7 @@ class HtmlDocumentLinkUrlFinder
      */
     public function getUniqueUrls(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
@@ -78,7 +78,7 @@ class HtmlDocumentLinkUrlFinder
         $urls = [];
 
         foreach ($allUrls as $url) {
-            if ($this->getConfiguration()->getIgnoreFragmentInUrlComparison()) {
+            if ($this->configuration->getIgnoreFragmentInUrlComparison()) {
                 $url = $this->getUniquenessComparisonUrl($url);
             }
 
@@ -107,11 +107,11 @@ class HtmlDocumentLinkUrlFinder
      */
     public function getAllUrls(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
-        if (!$this->getConfiguration()->hasSourceContent()) {
+        if (!$this->configuration->hasSourceContent()) {
             return [];
         }
 
@@ -132,11 +132,11 @@ class HtmlDocumentLinkUrlFinder
 
     public function getAll(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
-        if (!$this->getConfiguration()->hasSourceContent()) {
+        if (!$this->configuration->hasSourceContent()) {
             return [];
         }
 
@@ -159,16 +159,16 @@ class HtmlDocumentLinkUrlFinder
     {
         $this->elementsWithUrlAttributes = null;
         $this->sourceDOM = null;
-        $this->getConfiguration()->clearReset();
+        $this->configuration->clearReset();
     }
 
     public function getElements(): array
     {
-        if ($this->getConfiguration()->requiresReset()) {
+        if ($this->configuration->requiresReset()) {
             $this->reset();
         }
 
-        if (!$this->getConfiguration()->hasSourceContent()) {
+        if (!$this->configuration->hasSourceContent()) {
             return [];
         }
 
@@ -191,7 +191,7 @@ class HtmlDocumentLinkUrlFinder
             $url = $this->getUrlAttributeFromElement($element);
             $discoveredUrl = new NormalisedUrl($this->getAbsoluteUrlDeriver(
                 $url,
-                (string)$this->getConfiguration()->getSourceUrl()
+                (string)$this->configuration->getSourceUrl()
             )->getAbsoluteUrl());
 
             if ($this->isUrlInScope($discoveredUrl)) {
@@ -213,11 +213,11 @@ class HtmlDocumentLinkUrlFinder
 
     private function isUrlInScope(Url $discoveredUrl): bool
     {
-        if (!$this->getConfiguration()->hasUrlScope()) {
+        if (!$this->configuration->hasUrlScope()) {
             return true;
         }
 
-        foreach ($this->getConfiguration()->getUrlScope() as $scopeUrl) {
+        foreach ($this->configuration->getUrlScope() as $scopeUrl) {
             if ($this->getUrlScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
                 return true;
             }
@@ -247,7 +247,7 @@ class HtmlDocumentLinkUrlFinder
             $this->sourceDOM->strictErrorChecking = false;
             $this->sourceDOM->validateOnParse = false;
 
-            $source = $this->getConfiguration()->getSource();
+            $source = $this->configuration->getSource();
 
             $characterSet = $source->getCharacterSet();
             $content = trim($source->getContent());
@@ -255,7 +255,7 @@ class HtmlDocumentLinkUrlFinder
             if (!empty($characterSet)) {
                 @$this->sourceDOM->loadHTML(
                     '<?xml encoding="'
-                    . $this->getConfiguration()->getSource()->getCharacterSet()
+                    . $this->configuration->getSource()->getCharacterSet()
                     . '">' . $content
                 );
             } else {
@@ -288,7 +288,7 @@ class HtmlDocumentLinkUrlFinder
     {
         if (is_null($this->elementsWithUrlAttributes)) {
             $this->elementsWithUrlAttributes = [];
-            $elementScope = $this->getConfiguration()->getElementScope();
+            $elementScope = $this->configuration->getElementScope();
 
             $elements = empty($elementScope)
                 ? $this->getAllElements()
@@ -310,8 +310,8 @@ class HtmlDocumentLinkUrlFinder
      */
     private function getAllElements(): array
     {
-        $attributeScopeName = $this->getConfiguration()->getAttributeScopeName();
-        $attributeScopeValue = $this->getConfiguration()->getAttributeScopeValue();
+        $attributeScopeName = $this->configuration->getAttributeScopeName();
+        $attributeScopeValue = $this->configuration->getAttributeScopeValue();
         $hasAttributeScope = !empty($attributeScopeName);
 
         $elements = $this->getElementsWithinElement($this->sourceDOM()->documentElement);
@@ -337,12 +337,12 @@ class HtmlDocumentLinkUrlFinder
      */
     private function getScopedElements(): array
     {
-        $attributeScopeName = $this->getConfiguration()->getAttributeScopeName();
-        $attributeScopeValue = $this->getConfiguration()->getAttributeScopeValue();
+        $attributeScopeName = $this->configuration->getAttributeScopeName();
+        $attributeScopeValue = $this->configuration->getAttributeScopeValue();
         $hasAttributeScope = !empty($attributeScopeName);
         $elements = [];
 
-        foreach ($this->getConfiguration()->getElementScope() as $tagName) {
+        foreach ($this->configuration->getElementScope() as $tagName) {
             $domNodeList = $this->sourceDOM()->getElementsByTagName($tagName);
             $elementsByTagName = [];
 
@@ -424,7 +424,7 @@ class HtmlDocumentLinkUrlFinder
 
     private function hasNonEmptyUrlAttribute(string $attributeValue): bool
     {
-        return $this->getConfiguration()->getIgnoreEmptyHref()
+        return $this->configuration->getIgnoreEmptyHref()
             ? !empty(trim($attributeValue))
             : true;
     }
