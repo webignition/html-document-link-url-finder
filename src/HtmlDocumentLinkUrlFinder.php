@@ -6,6 +6,7 @@ use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Url\ScopeComparer;
 use webignition\Url\Url;
+use webignition\WebResource\WebPage\WebPage;
 
 class HtmlDocumentLinkUrlFinder
 {
@@ -431,37 +432,19 @@ class HtmlDocumentLinkUrlFinder
     private function getBaseUrl(): string
     {
         if (is_null($this->baseUrl)) {
-            $baseElement = $this->getBaseElement();
-            if (is_null($baseElement)) {
-                $this->baseUrl = (string)$this->getConfiguration()->getSourceUrl();
-            } else {
-                $absoluteUrlDeriver = new AbsoluteUrlDeriver(
-                    $baseElement->getAttribute('href'),
-                    (string)$this->getConfiguration()->getSourceUrl()
-                );
-
-                $this->baseUrl = (string)$absoluteUrlDeriver->getAbsoluteUrl();
-            }
+            $this->baseUrl = $this->deriveBaseUrl();
         }
 
         return $this->baseUrl;
     }
 
-    /**
-     * @return \DOMElement|null
-     */
-    private function getBaseElement(): ?\DOMElement
+    private function deriveBaseUrl(): string
     {
-        $baseElements = $this->sourceDOM()->getElementsByTagName('base');
-        if ($baseElements->length !== 1) {
-            return null;
-        }
+        /* @var WebPage $webPage */
+        $webPage = $this->configuration->getSource();
 
-        $baseElement = $baseElements->item(0);
-        if (!$baseElement->hasAttribute('href')) {
-            return null;
-        }
+        $webPageBaseUrl = $webPage->getBaseUrl();
 
-        return $baseElement;
+        return (empty($webPageBaseUrl)) ? $this->configuration->getSourceUrl() : $webPageBaseUrl;
     }
 }

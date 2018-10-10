@@ -2,9 +2,12 @@
 
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
-use Mockery\MockInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
+use webignition\WebResource\Exception\InvalidContentTypeException;
 use webignition\WebResource\WebPage\WebPage;
 
 class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
@@ -742,21 +745,59 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $content
      * @param string $characterSet
+     * @param UriInterface|null $uri
      *
-     * @return MockInterface|WebPage
+     * @return WebPage
      */
-    private function createWebPage(string $content, ?string $characterSet)
+    private function createWebPage(string $content, ?string $characterSet, ?UriInterface $uri = null)
     {
-        $webPage = \Mockery::mock(WebPage::class);
-        $webPage
-            ->shouldReceive('getContent')
+        $contentTypeString = 'text/html';
+
+        if ($characterSet) {
+            $contentTypeString .= '; charset=' . $characterSet;
+        }
+
+        $responseBody = \Mockery::mock(StreamInterface::class);
+        $responseBody
+            ->shouldReceive('__toString')
             ->andReturn($content);
 
-        $webPage
-            ->shouldReceive('getCharacterSet')
-            ->andReturn($characterSet);
+        $response = \Mockery::mock(ResponseInterface::class);
+        $response
+            ->shouldReceive('getHeaderLine')
+            ->with(WebPage::HEADER_CONTENT_TYPE)
+            ->andReturn($contentTypeString);
+
+        $response
+            ->shouldReceive('getBody')
+            ->andReturn($responseBody);
+
+        $webPage = null;
+
+        if (empty($uri)) {
+            $uri = $this->createUri();
+        }
+
+        /* @var WebPage $webPage */
+        try {
+            $webPage = WebPage::createFromResponse(
+                $uri,
+                $response
+            );
+        } catch (InvalidContentTypeException $e) {
+        }
 
         return $webPage;
+    }
+
+    private function createUri(?string $uriString = '')
+    {
+        $uri = \Mockery::mock(UriInterface::class);
+        $uri
+            ->shouldReceive('__toString')
+            ->andReturn($uriString);
+
+        return $uri;
     }
 
     /**

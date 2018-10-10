@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b40c44661665771092ce51e5dc7f0cfe",
+    "content-hash": "a1aaa0a4d9099c693246ec3dfe08d295",
     "packages": [
         {
             "name": "etechnika/idna-convert",
@@ -762,16 +762,16 @@
         },
         {
             "name": "webignition/web-page-model",
-            "version": "5.0",
+            "version": "5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/webignition/web-page-model.git",
-                "reference": "82960693aa98a66261869d905ac258833895a38c"
+                "reference": "f102746e95613e5654b94c7bf7c99ec2da9ac3dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/82960693aa98a66261869d905ac258833895a38c",
-                "reference": "82960693aa98a66261869d905ac258833895a38c",
+                "url": "https://api.github.com/repos/webignition/web-page-model/zipball/f102746e95613e5654b94c7bf7c99ec2da9ac3dd",
+                "reference": "f102746e95613e5654b94c7bf7c99ec2da9ac3dd",
                 "shasum": ""
             },
             "require": {
@@ -811,7 +811,7 @@
                 "model",
                 "webpage"
             ],
-            "time": "2018-10-09T15:29:55+00:00"
+            "time": "2018-10-10T11:20:47+00:00"
         },
         {
             "name": "webignition/web-resource-interfaces",
