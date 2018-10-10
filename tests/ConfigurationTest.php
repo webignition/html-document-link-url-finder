@@ -9,7 +9,7 @@ use webignition\InternetMediaType\Parser\ParseException as InternetMediaTypePars
 use webignition\WebResource\Exception\InvalidContentTypeException;
 use webignition\WebResource\WebPage\WebPage;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var Configuration
@@ -39,15 +39,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param bool $expectedIgnoreEmptyHref
      */
     public function testCreate(
-        $configurationValues,
-        $expectedSource,
-        $expectedSourceUrl,
-        $expectedUrlScope,
-        $expectedElementScope,
-        $expectedAttributeScopeName,
-        $expectedAttributeScopeValue,
-        $expectedIgnoreFragmentInUrlComparison,
-        $expectedIgnoreEmptyHref
+        array $configurationValues,
+        string $expectedSource,
+        string $expectedSourceUrl,
+        array $expectedUrlScope,
+        array $expectedElementScope,
+        ?string $expectedAttributeScopeName,
+        ?string $expectedAttributeScopeValue,
+        bool $expectedIgnoreFragmentInUrlComparison,
+        bool $expectedIgnoreEmptyHref
     ) {
         $configuration = new Configuration($configurationValues);
 
@@ -61,10 +61,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedIgnoreEmptyHref, $configuration->getIgnoreEmptyHref());
     }
 
-    /**
-     * @return array
-     */
-    public function createDataProvider()
+    public function createDataProvider(): array
     {
         $webPage = \Mockery::mock(WebPage::class);
 
@@ -110,10 +107,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider elementScopeDataProvider
      *
-     * @param string $scope
-     * @param string $expectedScope
+     * @param string|array $scope
+     * @param array $expectedScope
      */
-    public function testElementScope($scope, $expectedScope)
+    public function testElementScope($scope, array $expectedScope)
     {
         $this->assertFalse($this->configuration->requiresReset());
 
@@ -123,10 +120,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->configuration->requiresReset());
     }
 
-    /**
-     * @return array
-     */
-    public function elementScopeDataProvider()
+    public function elementScopeDataProvider(): array
     {
         return [
             'a' => [
@@ -186,7 +180,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * @throws InvalidContentTypeException
      * @throws InternetMediaTypeParseException
      */
-    public function sourceDataProvider()
+    public function sourceDataProvider(): array
     {
         /* @var ResponseInterface|Mock $response */
         $response = \Mockery::mock(ResponseInterface::class);
@@ -213,7 +207,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * @param string $sourceUrl
      * @param string $expectedSourceUrl
      */
-    public function testSourceUrl($sourceUrl, $expectedSourceUrl)
+    public function testSourceUrl(string $sourceUrl, string $expectedSourceUrl)
     {
         $this->assertFalse($this->configuration->requiresReset());
 
@@ -223,10 +217,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->configuration->requiresReset());
     }
 
-    /**
-     * @return array
-     */
-    public function sourceUrlDataProvider()
+    public function sourceUrlDataProvider(): array
     {
         return [
             'default' => [
@@ -239,10 +230,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider urlScopeDataProvider
      *
-     * @param string $scope
+     * @param string|array $scope
      * @param array $expectedScope
      */
-    public function testUrlScope($scope, $expectedScope)
+    public function testUrlScope($scope, array $expectedScope)
     {
         $this->assertFalse($this->configuration->requiresReset());
         $this->assertFalse($this->configuration->hasUrlScope());
@@ -254,10 +245,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($this->configuration->requiresReset());
     }
 
-    /**
-     * @return array
-     */
-    public function urlScopeDataProvider()
+    public function urlScopeDataProvider(): array
     {
         return [
             'string' => [
@@ -282,10 +270,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider hasSourceContentDataProvider
      *
-     * @param WebPage $source
+     * @param WebPage|null $source
      * @param bool $expectedHasSourceContent
      */
-    public function testHasSourceContent($source, $expectedHasSourceContent)
+    public function testHasSourceContent($source, bool $expectedHasSourceContent)
     {
         if (!empty($source)) {
             $this->configuration->setSource($source);
@@ -294,10 +282,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedHasSourceContent, $this->configuration->hasSourceContent());
     }
 
-    /**
-     * @return array
-     */
-    public function hasSourceContentDataProvider()
+    public function hasSourceContentDataProvider(): array
     {
         $emptyWebPage = \Mockery::mock(WebPage::class);
         $emptyWebPage
