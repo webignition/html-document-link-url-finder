@@ -64,7 +64,7 @@ class Configuration
     /**
      * @param array $configurationValues
      */
-    public function __construct($configurationValues = [])
+    public function __construct(array $configurationValues = [])
     {
         if (isset($configurationValues[self::CONFIG_KEY_SOURCE])) {
             $this->setSource($configurationValues[self::CONFIG_KEY_SOURCE]);
@@ -103,87 +103,56 @@ class Configuration
         }
     }
 
-    /**
-     * @param bool $ignoreEmptyHref
-     */
-    public function setIgnoreEmptyHref($ignoreEmptyHref)
+    public function setIgnoreEmptyHref(bool $ignoreEmptyHref)
     {
         $this->ignoreEmptyHref = $ignoreEmptyHref;
         $this->requiresReset = true;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIgnoreEmptyHref()
+    public function getIgnoreEmptyHref(): bool
     {
         return $this->ignoreEmptyHref;
     }
 
-    /**
-     * @param string $name
-     * @param string $value
-     */
-    public function setAttributeScope($name, $value)
+    public function setAttributeScope(string $name, string $value)
     {
         $this->attributeScopeName = $name;
         $this->attributeScopeValue = $value;
         $this->requiresReset = true;
     }
 
-    /**
-     * @return string
-     */
-    public function getAttributeScopeName()
+    public function getAttributeScopeName(): ?string
     {
         return $this->attributeScopeName;
     }
 
-    /**
-     * @return string
-     */
-    public function getAttributeScopeValue()
+    public function getAttributeScopeValue(): ?string
     {
         return $this->attributeScopeValue;
     }
 
-    /**
-     * @param bool $ignoreFragmentInUrlComparison
-     */
-    public function setIgnoreFragmentInUrlComparison($ignoreFragmentInUrlComparison)
+    public function setIgnoreFragmentInUrlComparison(bool $ignoreFragmentInUrlComparison)
     {
         $this->ignoreFragmentInUrlComparison = $ignoreFragmentInUrlComparison;
     }
 
-    /**
-     * @return bool
-     */
-    public function getIgnoreFragmentInUrlComparison()
+    public function getIgnoreFragmentInUrlComparison(): bool
     {
         return $this->ignoreFragmentInUrlComparison;
     }
 
-    /**
-     * @param WebPage $webPage
-     */
     public function setSource(WebPage $webPage)
     {
         $this->source = $webPage;
         $this->requiresReset = true;
     }
 
-    /**
-     * @return WebPage
-     */
-    public function getSource()
+    public function getSource(): ?WebPage
     {
         return $this->source;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSourceContent()
+    public function hasSourceContent(): bool
     {
         if (empty($this->source)) {
             return false;
@@ -192,10 +161,7 @@ class Configuration
         return !empty(trim($this->source->getContent()));
     }
 
-    /**
-     * @return bool
-     */
-    public function requiresReset()
+    public function requiresReset(): bool
     {
         return $this->requiresReset;
     }
@@ -224,18 +190,12 @@ class Configuration
         $this->requiresReset = true;
     }
 
-    /**
-     * @return array
-     */
-    public function getUrlScope()
+    public function getUrlScope(): array
     {
         return $this->urlScope;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasUrlScope()
+    public function hasUrlScope(): bool
     {
         return !empty($this->urlScope);
     }
@@ -262,28 +222,18 @@ class Configuration
         $this->requiresReset = true;
     }
 
-    /**
-     * @return array
-     */
-    public function getElementScope()
+    public function getElementScope(): array
     {
         return $this->elementScope;
     }
 
-
-    /**
-     * @param $sourceUrl
-     */
-    public function setSourceUrl($sourceUrl)
+    public function setSourceUrl(string $sourceUrl)
     {
         $this->sourceUrl = new NormalisedUrl($sourceUrl);
         $this->requiresReset = true;
     }
 
-    /**
-     * @return string
-     */
-    public function getSourceUrl()
+    public function getSourceUrl(): ?string
     {
         return $this->sourceUrl;
     }

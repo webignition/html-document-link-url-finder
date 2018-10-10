@@ -16,12 +16,7 @@ class ElementExcluder
         ],
     ];
 
-    /**
-     * @param \DOMElement $element
-     *
-     * @return boolean
-     */
-    public function isExcluded(\DOMElement $element)
+    public function isExcluded(\DOMElement $element): bool
     {
         $elementNodeName = $element->nodeName;
 
@@ -34,13 +29,7 @@ class ElementExcluder
         return false;
     }
 
-    /**
-     * @param \DOMElement $element
-     * @param array $attributeMatchers
-     *
-     * @return bool
-     */
-    private function matchesAttributes(\DOMElement $element, array $attributeMatchers)
+    private function matchesAttributes(\DOMElement $element, array $attributeMatchers): bool
     {
         if (empty($attributeMatchers)) {
             return true;

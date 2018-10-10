@@ -32,7 +32,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @throws QueryPathException
      */
-    public function testGetAll(Configuration $configuration, $expectedResult)
+    public function testGetAll(Configuration $configuration, array $expectedResult)
     {
         $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
         $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
@@ -44,10 +44,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getAllDataProvider()
+    public function getAllDataProvider(): array
     {
         return [
             'no source content' => [
@@ -418,7 +415,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @throws QueryPathException
      */
-    public function testGetAllUrls(Configuration $configuration, $expectedResult)
+    public function testGetAllUrls(Configuration $configuration, array $expectedResult)
     {
         $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
         $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
@@ -430,10 +427,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getAllUrlsDataProvider()
+    public function getAllUrlsDataProvider(): array
     {
         return [
             'no source content' => [
@@ -564,7 +558,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @throws QueryPathException
      */
-    public function testGetUniqueUrls(Configuration $configuration, $expectedResult)
+    public function testGetUniqueUrls(Configuration $configuration, array $expectedResult)
     {
         $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
         $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
@@ -575,10 +569,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getUniqueUrlsDataProvider()
+    public function getUniqueUrlsDataProvider(): array
     {
         return [
             'no source content' => [
@@ -637,7 +628,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @throws QueryPathException
      */
-    public function testHasUniqueUrls(Configuration $configuration, $expectedHasUrls)
+    public function testHasUniqueUrls(Configuration $configuration, bool $expectedHasUrls)
     {
         $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
         $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
@@ -647,10 +638,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedHasUrls, $this->htmlDocumentLinkUrlFinder->hasUrls());
     }
 
-    /**
-     * @return array
-     */
-    public function hasUrlsDataProvider()
+    public function hasUrlsDataProvider(): array
     {
         return [
             'no source content' => [
@@ -693,7 +681,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
      *
      * @throws QueryPathException
      */
-    public function testGetElements(Configuration $configuration, $expectedResult)
+    public function testGetElements(Configuration $configuration, array $expectedResult)
     {
         $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
         $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
@@ -704,10 +692,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    /**
-     * @return array
-     */
-    public function getElementsDataProvider()
+    public function getElementsDataProvider(): array
     {
         return [
             'no source content' => [
@@ -768,9 +753,10 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @param string $content
      * @param string $characterSet
+     *
      * @return MockInterface|WebPage
      */
-    private function createWebPage($content, $characterSet)
+    private function createWebPage(string $content, ?string $characterSet)
     {
         $webPage = \Mockery::mock(WebPage::class);
         $webPage
@@ -794,12 +780,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         \Mockery::close();
     }
 
-    /**
-     * @param string $name
-     *
-     * @return string
-     */
-    private function loadHtmlDocumentFixture($name)
+    private function loadHtmlDocumentFixture(string $name): string
     {
         return file_get_contents(__DIR__ . '/fixtures/html-documents/' . $name . '.html');
     }
