@@ -236,7 +236,7 @@ class HtmlDocumentLinkUrlFinder
 
     private function getElementsWithUrlAttributes(): array
     {
-        if (is_null($this->elementsWithUrlAttributes)) {
+        if (empty($this->elementsWithUrlAttributes)) {
             $elements = $this->findElementsWithUrlAttributes();
             $filteredElements = $this->filterElements($elements);
 
