@@ -27,7 +27,7 @@
     },
     "require": {
         "php": ">=7.2.0",
-        "webignition/absolute-url-deriver": "^1.4",
+        "webignition/absolute-url-deriver": ">=2,<3",
         "webignition/url": ">2, <3",
         "webignition/web-page-model":">=5.1,<6"
     },
