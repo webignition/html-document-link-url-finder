@@ -2,10 +2,12 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
+use Psr\Http\Message\UriInterface;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\NormalisedUrl\NormalisedUrl;
-use webignition\Url\ScopeComparer;
-use webignition\Url\Url;
+use webignition\Uri\Normalizer;
+use webignition\Uri\ScopeComparer;
+use webignition\Uri\Uri;
 use webignition\WebResource\WebPage\WebPage;
 
 class HtmlDocumentLinkUrlFinder
@@ -87,14 +89,15 @@ class HtmlDocumentLinkUrlFinder
 
     private function getUniquenessComparisonUrl(string $url): string
     {
-        $urlObject = new Url($url);
+        $uri = new Uri($url);
 
-        if (!$urlObject->hasFragment()) {
+        if ('' === $uri->getFragment()) {
             return $url;
         }
 
-        $urlObject->setFragment(null);
-        return (string)$urlObject;
+        $uri = $uri->withFragment('');
+
+        return (string) $uri;
     }
 
     /**
@@ -183,13 +186,16 @@ class HtmlDocumentLinkUrlFinder
         $elements = [];
 
         foreach ($elementsWithUrlAttributes as $element) {
-            $url = $this->getUrlValueFromElement($element);
-            $discoveredUrl = new NormalisedUrl($this->createAbsoluteUrlDeriver(
-                $url,
-                (string)$this->configuration->getSourceUrl()
-            )->getAbsoluteUrl());
+            $uri = new Uri($this->getUrlValueFromElement($element));
 
-            if ($this->isUrlInScope($discoveredUrl)) {
+            $discoveredUrl = $this->createAbsoluteUrlDeriver(
+                (string) $uri,
+                (string)$this->configuration->getSourceUrl()
+            )->getAbsoluteUrl();
+
+            $discoveredUri = Normalizer::normalize(new Uri((string) $discoveredUrl));
+
+            if ($this->isUrlInScope($discoveredUri)) {
                 $elements[] = $element;
             }
         }
@@ -206,7 +212,7 @@ class HtmlDocumentLinkUrlFinder
         return $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
     }
 
-    private function isUrlInScope(Url $discoveredUrl): bool
+    private function isUrlInScope(UriInterface $discoveredUrl): bool
     {
         if (!$this->configuration->hasUrlScope()) {
             return true;
