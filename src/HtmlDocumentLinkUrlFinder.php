@@ -4,7 +4,6 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 
 use Psr\Http\Message\UriInterface;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
-use webignition\NormalisedUrl\NormalisedUrl;
 use webignition\Uri\Normalizer;
 use webignition\Uri\ScopeComparer;
 use webignition\Uri\Uri;
@@ -116,13 +115,21 @@ class HtmlDocumentLinkUrlFinder
         $urls = [];
         $elements = $this->getRawElements();
 
-        foreach ($elements as $element) {
-            $discoveredUrl = new NormalisedUrl($this->createAbsoluteUrlDeriver(
-                $this->getUrlValueFromElement($element),
-                $this->getBaseUrl()
-            )->getAbsoluteUrl());
+        if (empty($elements)) {
+            return [];
+        }
 
-            $urls[] = (string)$discoveredUrl;
+        $baseUri = new Uri($this->getBaseUrl());
+
+        foreach ($elements as $element) {
+            $uri = AbsoluteUrlDeriver::derive(
+                $baseUri,
+                new Uri($this->getUrlValueFromElement($element))
+            );
+
+            $uri = Normalizer::normalize($uri);
+
+            $urls[] = (string) $uri;
         }
 
         return $urls;
@@ -185,15 +192,19 @@ class HtmlDocumentLinkUrlFinder
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
         $elements = [];
 
+        if (empty($elementsWithUrlAttributes)) {
+            return [];
+        }
+
+        $baseUri = new Uri($this->configuration->getSourceUrl());
+
         foreach ($elementsWithUrlAttributes as $element) {
-            $uri = new Uri($this->getUrlValueFromElement($element));
+            $discoveredUri = AbsoluteUrlDeriver::derive(
+                $baseUri,
+                new Uri($this->getUrlValueFromElement($element))
+            );
 
-            $discoveredUrl = $this->createAbsoluteUrlDeriver(
-                (string) $uri,
-                (string)$this->configuration->getSourceUrl()
-            )->getAbsoluteUrl();
-
-            $discoveredUri = Normalizer::normalize(new Uri((string) $discoveredUrl));
+            $discoveredUri = Normalizer::normalize($discoveredUri);
 
             if ($this->isUrlInScope($discoveredUri)) {
                 $elements[] = $element;
@@ -225,14 +236,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return false;
-    }
-
-    private function createAbsoluteUrlDeriver(string $nonAbsoluteUrl, string $absoluteUrl): AbsoluteUrlDeriver
-    {
-        return new AbsoluteUrlDeriver(
-            $nonAbsoluteUrl,
-            $absoluteUrl
-        );
     }
 
     public function hasUrls(): bool

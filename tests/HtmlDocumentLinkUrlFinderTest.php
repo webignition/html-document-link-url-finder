@@ -136,7 +136,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                         'element' => '<a href="./foo/bar.html">Path resolution example</a>',
                     ],
                     [
-                        'url' => 'http://example.com/#',
+                        'url' => 'http://example.com/',
                         'element' => '<a href="#">Empty fragment only</a>',
                     ],
                     [
@@ -284,7 +284,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                         'element' => '<a href="./foo/bar.html">Path resolution example</a>',
                     ],
                     [
-                        'url' => 'http://example.com/#',
+                        'url' => 'http://example.com/',
                         'element' => '<a href="#">Empty fragment only</a>',
                     ],
                     [
@@ -465,7 +465,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     'http://example.com/',
                     'http://www.example.com/',
                     'http://example.com/foo/bar.html',
-                    'http://example.com/#',
+                    'http://example.com/',
                     'http://www.youtube.com/example',
                     'http://example.com/images/youtube.png',
                 ],
