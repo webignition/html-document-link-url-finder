@@ -2,7 +2,8 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
-use webignition\NormalisedUrl\NormalisedUrl;
+use webignition\Uri\Normalizer;
+use webignition\Uri\Uri;
 use webignition\WebResourceInterfaces\WebPageInterface;
 
 class Configuration
@@ -177,14 +178,18 @@ class Configuration
     public function setUrlScope($scope)
     {
         if (is_string($scope)) {
-            $this->urlScope = array(new NormalisedUrl($scope));
+            $this->urlScope = array(new Uri($scope));
         }
 
         if (is_array($scope)) {
             $this->urlScope = array();
             foreach ($scope as $url) {
-                $this->urlScope[] = new NormalisedUrl($url);
+                $this->urlScope[] = new Uri($url);
             }
+        }
+
+        foreach ($this->urlScope as $index => $uri) {
+            $this->urlScope[$index] = Normalizer::normalize($uri);
         }
 
         $this->requiresReset = true;
@@ -229,7 +234,7 @@ class Configuration
 
     public function setSourceUrl(string $sourceUrl)
     {
-        $this->sourceUrl = new NormalisedUrl($sourceUrl);
+        $this->sourceUrl = (string) Normalizer::normalize(new Uri($sourceUrl));
         $this->requiresReset = true;
     }
 
