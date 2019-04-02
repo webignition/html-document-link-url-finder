@@ -7,9 +7,14 @@ class Link
     private $url;
     private $element;
 
-    public function __construct(string $url, string $element)
+    public function __construct(string $url, \DOMElement $element)
     {
         $this->url = $url;
+
+        if (empty($element->ownerDocument)) {
+            throw new \InvalidArgumentException('element must have an ownerDocument');
+        }
+
         $this->element = $element;
     }
 
@@ -18,8 +23,13 @@ class Link
         return $this->url;
     }
 
-    public function getElement(): string
+    public function getElement(): \DOMElement
     {
         return $this->element;
+    }
+
+    public function getElementAsString(): string
+    {
+        return $this->element->ownerDocument->saveHTML($this->element);
     }
 }
