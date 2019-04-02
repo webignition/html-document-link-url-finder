@@ -621,57 +621,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider hasUrlsDataProvider
-     *
-     * @param Configuration $configuration
-     * @param bool $expectedHasUrls
-     */
-    public function testHasUniqueUrls(Configuration $configuration, bool $expectedHasUrls)
-    {
-        $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
-        $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
-            $configuration->getElementScope()
-        );
-
-        $this->assertEquals($expectedHasUrls, $this->htmlDocumentLinkUrlFinder->hasUrls());
-    }
-
-    public function hasUrlsDataProvider(): array
-    {
-        return [
-            'no source content' => [
-                'configuration' => new Configuration(),
-                'expectedHasUrls' => false,
-            ],
-            'empty source content' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage('', 'utf8'),
-                ]),
-                'expectedHasUrls' => false,
-            ],
-            'empty body' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('empty-body'),
-                        'utf-8'
-                    ),
-                ]),
-                'expectedHasUrls' => false,
-            ],
-            'has urls' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('uniqueness'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                ]),
-                'expectedHasUrls' => true,
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider getElementsDataProvider
      *
      * @param Configuration $configuration

@@ -234,11 +234,6 @@ class HtmlDocumentLinkUrlFinder
         return false;
     }
 
-    public function hasUrls(): bool
-    {
-        return count($this->getUniqueUrls()) > 0;
-    }
-
     private function getElementsWithUrlAttributes(): array
     {
         if (empty($this->elementsWithUrlAttributes)) {
