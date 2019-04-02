@@ -267,10 +267,6 @@ class HtmlDocumentLinkUrlFinder
             $attributeValue = $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
         }
 
-        if (!$this->hasNonEmptyUrlAttribute($attributeValue)) {
-            return false;
-        }
-
         if ($this->looksLikeConcatenatedJsString($attributeValue)) {
             return false;
         }
@@ -307,13 +303,6 @@ class HtmlDocumentLinkUrlFinder
         $pattern = '/'.$patternBody.'/i';
 
         return preg_match($pattern, $url) > 0;
-    }
-
-    private function hasNonEmptyUrlAttribute(string $attributeValue): bool
-    {
-        return $this->configuration->getIgnoreEmptyHref()
-            ? !empty(trim($attributeValue))
-            : true;
     }
 
     private function getBaseUrl(): string

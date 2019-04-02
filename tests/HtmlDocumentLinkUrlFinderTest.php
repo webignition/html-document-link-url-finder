@@ -436,47 +436,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    /**
-     * @dataProvider getAllUrlsDataProvider
-     *
-     * @param Configuration $configuration
-     * @param array $expectedResult
-     */
-    public function testGetAllUrls(Configuration $configuration, array $expectedResult)
-    {
-        $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
-        $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
-            $configuration->getElementScope()
-        );
-
-        $result = $this->htmlDocumentLinkUrlFinder->getAllUrls();
-
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    public function getAllUrlsDataProvider(): array
-    {
-        return [
-            'element scope link, attribute scope rel=stylesheet, ignore empty href' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('example01'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                    Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'link',
-                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'rel',
-                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'stylesheet',
-                    Configuration::CONFIG_KEY_IGNORE_EMPTY_HREF => true,
-                ]),
-                'expectedResult' => [
-                    'http://cdn.example.com/foo.css',
-                    'http://example.com/assets/css/main.css',
-                ],
-            ],
-        ];
-    }
-
     public function testGetConfiguration()
     {
         $this->assertInstanceOf(Configuration::class, $this->htmlDocumentLinkUrlFinder->getConfiguration());
