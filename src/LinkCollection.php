@@ -2,7 +2,7 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
-use webignition\Uri\Uri;
+use Psr\Http\Message\UriInterface;
 
 class LinkCollection implements \Iterator, \Countable
 {
@@ -54,31 +54,34 @@ class LinkCollection implements \Iterator, \Countable
         return isset($this->links[$this->iteratorPosition]);
     }
 
-    public function getUrls(): array
+    /**
+     * @return UriInterface[]
+     */
+    public function getUris(): array
     {
-        $urls = [];
+        $uris = [];
 
         foreach ($this->links as $link) {
-            $urls[] = $link->getUrl();
+            $uris[] = $link->getUri();
         }
 
-        return $urls;
+        return $uris;
     }
 
-    public function getUniqueUrls(bool $ignoreFragment = false): array
+    public function getUniqueUris(bool $ignoreFragment = false): array
     {
-        $allUrls = $this->getUrls();
-        $uniqueUrls = [];
+        $allUris = $this->getUris();
+        $uniqueUris = [];
 
-        foreach ($allUrls as $url) {
+        foreach ($allUris as $uri) {
             if ($ignoreFragment) {
-                $url = $this->createUniquenessComparisonUrl($url);
+                $uri = $uri->withFragment('');
             }
 
-            $uniqueUrls[$url] = $url;
+            $uniqueUris[(string) $uri] = $uri;
         }
 
-        return array_values($uniqueUrls);
+        return array_values($uniqueUris);
     }
 
     public function filterByElementName(string $name): LinkCollection
@@ -110,13 +113,5 @@ class LinkCollection implements \Iterator, \Countable
         }
 
         return new LinkCollection($filteredLinks);
-    }
-
-    private function createUniquenessComparisonUrl(string $url): string
-    {
-        $uri = new Uri($url);
-        $uri = $uri->withFragment('');
-
-        return (string) $uri;
     }
 }

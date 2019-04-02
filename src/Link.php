@@ -2,14 +2,16 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
+use Psr\Http\Message\UriInterface;
+
 class Link
 {
     private $url;
     private $element;
 
-    public function __construct(string $url, \DOMElement $element)
+    public function __construct(UriInterface $uri, \DOMElement $element)
     {
-        $this->url = $url;
+        $this->url = $uri;
 
         if (empty($element->ownerDocument)) {
             throw new \InvalidArgumentException('element must have an ownerDocument');
@@ -18,7 +20,7 @@ class Link
         $this->element = $element;
     }
 
-    public function getUrl(): string
+    public function getUri(): UriInterface
     {
         return $this->url;
     }
