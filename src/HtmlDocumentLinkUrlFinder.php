@@ -124,27 +124,6 @@ class HtmlDocumentLinkUrlFinder
         $this->configuration->clearReset();
     }
 
-    public function getElements(): array
-    {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        if (!$this->configuration->hasSourceContent()) {
-            return [];
-        }
-
-        $elements = [];
-        $rawElements = $this->getRawElements();
-
-        foreach ($rawElements as $element) {
-            /* @var \DOMElement $element */
-            $elements[] = trim($element->ownerDocument->saveHTML($element));
-        }
-
-        return $elements;
-    }
-
     private function getRawElements(): array
     {
         $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
