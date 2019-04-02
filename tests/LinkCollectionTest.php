@@ -66,53 +66,101 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetUniqueUris()
+    /**
+     * @dataProvider getUniqueUrisDataProvider
+     */
+    public function testGetUniqueUris(bool $ignoreFragment, array $expectedUris)
     {
-        $this->assertEquals(
-            [
-                'http://foo.example.com/1',
-                'http://example.com/2',
-                'http://example.com/2#foo',
-                'http://bar.example.com/3',
+        $this->assertEquals($expectedUris, $this->linkCollection->getUniqueUris($ignoreFragment));
+    }
+
+    public function getUniqueUrisDataProvider(): array
+    {
+        return [
+            'ignoreFragment false' => [
+                'ignoreFragment' => false,
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://example.com/2',
+                    'http://example.com/2#foo',
+                    'http://bar.example.com/3',
+                ],
             ],
-            $this->linkCollection->getUniqueUris()
-        );
-    }
-
-    public function testGetUniqueUrisIgnoringFragment()
-    {
-        $this->assertEquals(
-            [
-                'http://foo.example.com/1',
-                'http://example.com/2',
-                'http://bar.example.com/3',
+            'ignoreFragment true' => [
+                'ignoreFragment' => true,
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://example.com/2',
+                    'http://bar.example.com/3',
+                ],
             ],
-            $this->linkCollection->getUniqueUris(true)
-        );
+        ];
     }
 
-    public function testFilterByElementName()
+    /**
+     * @dataProvider filterByElementNameDataProvider
+     */
+    public function testFilterByElementName(string $elementName, array $expectedUris)
     {
-        $aElementFilteredLinkCollection = $this->linkCollection->filterByElementName('a');
-
-        $this->assertInstanceOf(LinkCollection::class, $aElementFilteredLinkCollection);
-        $this->assertNotSame($this->linkCollection, $aElementFilteredLinkCollection);
-        $this->assertCount(4, $aElementFilteredLinkCollection);
-
-        $linkElementFilteredLinkCollection = $this->linkCollection->filterByElementName('link');
-
-        $this->assertInstanceOf(LinkCollection::class, $linkElementFilteredLinkCollection);
-        $this->assertNotSame($this->linkCollection, $linkElementFilteredLinkCollection);
-        $this->assertCount(1, $linkElementFilteredLinkCollection);
-    }
-
-    public function testFilterByAttribute()
-    {
-        $filteredLinkCollection = $this->linkCollection->filterByAttribute('href', "/1");
+        $filteredLinkCollection = $this->linkCollection->filterByElementName($elementName);
 
         $this->assertInstanceOf(LinkCollection::class, $filteredLinkCollection);
         $this->assertNotSame($this->linkCollection, $filteredLinkCollection);
-        $this->assertCount(2, $filteredLinkCollection);
+        $this->assertEquals($expectedUris, $filteredLinkCollection->getUris());
+    }
+
+    public function filterByElementNameDataProvider(): array
+    {
+        return [
+            'a' => [
+                'elementName' => 'a',
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://foo.example.com/1',
+                    'http://example.com/2',
+                    'http://example.com/2#foo',
+                ],
+            ],
+            'link' => [
+                'elementName' => 'link',
+                'expectedUris' => [
+                    'http://bar.example.com/3',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider filterByAttributeDataProvider
+     */
+    public function testFilterByAttribute(string $name, string $value, array $expectedUris)
+    {
+        $filteredLinkCollection = $this->linkCollection->filterByAttribute($name, $value);
+
+        $this->assertInstanceOf(LinkCollection::class, $filteredLinkCollection);
+        $this->assertNotSame($this->linkCollection, $filteredLinkCollection);
+        $this->assertEquals($expectedUris, $filteredLinkCollection->getUris());
+    }
+
+    public function filterByAttributeDataProvider(): array
+    {
+        return [
+            'href="/1"' => [
+                'name' => 'href',
+                'value' => '/1',
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://foo.example.com/1',
+                ],
+            ],
+            'id="3"' => [
+                'name' => 'id',
+                'value' => '3',
+                'expectedUris' => [
+                    'http://bar.example.com/3',
+                ],
+            ],
+        ];
     }
 
     /**
