@@ -4,7 +4,7 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 
 use webignition\Uri\Uri;
 
-class LinkCollection implements \Iterator
+class LinkCollection implements \Iterator, \Countable
 {
     /**
      * @var Link[]
@@ -22,6 +22,11 @@ class LinkCollection implements \Iterator
         }
 
         $this->iteratorPosition = 0;
+    }
+
+    public function count(): int
+    {
+        return count($this->links);
     }
 
     public function rewind()
@@ -74,6 +79,22 @@ class LinkCollection implements \Iterator
         }
 
         return array_values($uniqueUrls);
+    }
+
+    public function filterByElementName(string $name): LinkCollection
+    {
+        $comparatorName = trim(strtolower($name));
+        $filteredLinks = [];
+
+        foreach ($this as $link) {
+            $element = $link->getElement();
+
+            if (strtolower($element->nodeName) === $comparatorName) {
+                $filteredLinks[] = $link;
+            }
+        }
+
+        return new LinkCollection($filteredLinks);
     }
 
     private function createUniquenessComparisonUrl(string $url): string
