@@ -156,31 +156,6 @@ class HtmlDocumentLinkUrlFinder
         return $urls;
     }
 
-    public function getAll(): array
-    {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        if (!$this->configuration->hasSourceContent()) {
-            return [];
-        }
-
-        $urls = $this->getAllUrls();
-        $elements = $this->getElements();
-
-        $result = [];
-
-        foreach ($urls as $index => $url) {
-            $result[] = [
-                'url' => $url,
-                'element' => $elements[$index]
-            ];
-        }
-
-        return $result;
-    }
-
     private function reset()
     {
         $this->elementsWithUrlAttributes = null;

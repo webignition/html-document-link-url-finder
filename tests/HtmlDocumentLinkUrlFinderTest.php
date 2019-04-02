@@ -29,7 +29,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider getAllDataProvider
+     * @dataProvider getLinkCollectionDataProvider
      */
     public function testGetLinkCollection(Configuration $configuration, array $expectedLinkCollectionData)
     {
@@ -48,36 +48,18 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         }
     }
 
-    /**
-     * @dataProvider getAllDataProvider
-     *
-     * @param Configuration $configuration
-     * @param array $expectedResult
-     */
-    public function testGetAll(Configuration $configuration, array $expectedResult)
-    {
-        $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
-        $this->htmlDocumentLinkUrlFinder->getConfiguration()->setElementScope(
-            $configuration->getElementScope()
-        );
-
-        $result = $this->htmlDocumentLinkUrlFinder->getAll();
-
-        $this->assertEquals($expectedResult, $result);
-    }
-
-    public function getAllDataProvider(): array
+    public function getLinkCollectionDataProvider(): array
     {
         return [
             'no source content' => [
                 'configuration' => new Configuration(),
-                'expectedResult' => [],
+                'expectedLinkCollectionData' => [],
             ],
             'empty source content' => [
                 'configuration' => new Configuration([
                     Configuration::CONFIG_KEY_SOURCE => $this->createWebPage('', 'utf8'),
                 ]),
-                'expectedResult' => [],
+                'expectedLinkCollectionData' => [],
             ],
             'empty body' => [
                 'configuration' => new Configuration([
@@ -86,7 +68,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                         'utf-8'
                     ),
                 ]),
-                'expectedResult' => [],
+                'expectedLinkCollectionData' => [],
             ],
             'default' => [
                 'configuration' => new Configuration([
@@ -96,7 +78,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     ),
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://cdn.example.com/foo.css',
                         'element' => '<link href="//cdn.example.com/foo.css" rel="stylesheet">',
@@ -180,7 +162,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                     Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'link',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://cdn.example.com/foo.css',
                         'element' => '<link href="//cdn.example.com/foo.css" rel="stylesheet">',
@@ -204,7 +186,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                     Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'link',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://cdn.example.com/foo.css',
                         'element' => '<link href="//cdn.example.com/foo.css" rel="stylesheet">',
@@ -231,7 +213,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                         'script',
                     ],
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://cdn.example.com/foo.css',
                         'element' => '<link href="//cdn.example.com/foo.css" rel="stylesheet">',
@@ -263,7 +245,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                     Configuration::CONFIG_KEY_URL_SCOPE => 'http://example.com',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/assets/css/main.css',
                         'element' => '<link href="/assets/css/main.css" rel="stylesheet">',
@@ -327,7 +309,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                         'http://www.example.com',
                     ],
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://cdn.example.com/foo.css',
                         'element' => '<link href="//cdn.example.com/foo.css" rel="stylesheet">',
@@ -350,7 +332,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     ),
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/foo',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://base.example.com/foobar/foo/bar.html',
                         'element' => '<a href="foo/bar.html">A</a>',
@@ -381,7 +363,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     ),
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/foo',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/foo/bar.html',
                         'element' => '<a href="foo/bar.html">A</a>',
@@ -396,7 +378,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     ),
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/',
                         'element' => '<a href="http://example.com/">Example no subdomain</a>',
@@ -415,7 +397,7 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                     ),
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                 ]),
-                'expectedResult' => [
+                'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/main.css',
                         'element' => '<link href="main.css" rel="stylesheet">',
