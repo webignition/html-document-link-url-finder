@@ -32,6 +32,6 @@ class Link
 
     public function getElementAsString(): string
     {
-        return $this->element->ownerDocument->saveHTML($this->element);
+        return trim($this->element->ownerDocument->saveHTML($this->element));
     }
 }

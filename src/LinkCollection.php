@@ -10,7 +10,7 @@ class LinkCollection implements \Iterator, \Countable
     /**
      * @var Link[]
      */
-    private $links;
+    private $links = [];
 
     private $iteratorPosition = 0;
 
