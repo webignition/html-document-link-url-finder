@@ -97,6 +97,21 @@ class LinkCollection implements \Iterator, \Countable
         return new LinkCollection($filteredLinks);
     }
 
+    public function filterByAttribute(string $name, string $value): LinkCollection
+    {
+        $filteredLinks = [];
+
+        foreach ($this as $link) {
+            $element = $link->getElement();
+
+            if ($element->getAttribute($name) === $value) {
+                $filteredLinks[] = $link;
+            }
+        }
+
+        return new LinkCollection($filteredLinks);
+    }
+
     private function createUniquenessComparisonUrl(string $url): string
     {
         $uri = new Uri($url);

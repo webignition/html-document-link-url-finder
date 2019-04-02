@@ -102,4 +102,13 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($this->linkCollection, $linkElementFilteredLinkCollection);
         $this->assertCount(1, $linkElementFilteredLinkCollection);
     }
+
+    public function testFilterByAttribute()
+    {
+        $filteredLinkCollection = $this->linkCollection->filterByAttribute('href', "/1");
+
+        $this->assertInstanceOf(LinkCollection::class, $filteredLinkCollection);
+        $this->assertNotSame($this->linkCollection, $filteredLinkCollection);
+        $this->assertCount(2, $filteredLinkCollection);
+    }
 }
