@@ -85,44 +85,6 @@ class HtmlDocumentLinkUrlFinder
     /**
      * @return string[]
      */
-    public function getUniqueUrls(): array
-    {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        $allUrls = $this->getAllUrls();
-        $urls = [];
-
-        foreach ($allUrls as $url) {
-            if ($this->configuration->getIgnoreFragmentInUrlComparison()) {
-                $url = $this->getUniquenessComparisonUrl($url);
-            }
-
-            if (!in_array($url, $urls)) {
-                $urls[] = $url;
-            }
-        }
-
-        return $urls;
-    }
-
-    private function getUniquenessComparisonUrl(string $url): string
-    {
-        $uri = new Uri($url);
-
-        if ('' === $uri->getFragment()) {
-            return $url;
-        }
-
-        $uri = $uri->withFragment('');
-
-        return (string) $uri;
-    }
-
-    /**
-     * @return string[]
-     */
     public function getAllUrls(): array
     {
         if ($this->configuration->requiresReset()) {
