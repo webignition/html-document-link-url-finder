@@ -2,6 +2,7 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
+use webignition\Uri\ScopeComparer;
 use Psr\Http\Message\UriInterface;
 
 class LinkCollection implements \Iterator, \Countable
@@ -61,7 +62,7 @@ class LinkCollection implements \Iterator, \Countable
     {
         $uris = [];
 
-        foreach ($this->links as $link) {
+        foreach ($this as $link) {
             $uris[] = $link->getUri();
         }
 
@@ -109,6 +110,21 @@ class LinkCollection implements \Iterator, \Countable
 
             if ($element->getAttribute($name) === $value) {
                 $filteredLinks[] = $link;
+            }
+        }
+
+        return new LinkCollection($filteredLinks);
+    }
+
+    public function filterByUriScope(ScopeComparer $scopeComparer, array $scopes): LinkCollection
+    {
+        $filteredLinks = [];
+
+        foreach ($scopes as $scope) {
+            foreach ($this as $link) {
+                if ($scopeComparer->isInScope($scope, $link->getUri())) {
+                    $filteredLinks[] = $link;
+                }
             }
         }
 

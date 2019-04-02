@@ -1,9 +1,11 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use webignition\HtmlDocumentLinkUrlFinder\Link;
 use webignition\HtmlDocumentLinkUrlFinder\LinkCollection;
+use webignition\Uri\ScopeComparer;
 use webignition\Uri\Uri;
 
 class LinkCollectionTest extends \PHPUnit\Framework\TestCase
@@ -32,11 +34,11 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->links = [
-            new Link(new Uri('http://example.com/1'), $domDocument->getElementById('1')),
-            new Link(new Uri('http://example.com/1'), $domDocument->getElementById('1.1')),
+            new Link(new Uri('http://foo.example.com/1'), $domDocument->getElementById('1')),
+            new Link(new Uri('http://foo.example.com/1'), $domDocument->getElementById('1.1')),
             new Link(new Uri('http://example.com/2'), $domDocument->getElementById('2')),
             new Link(new Uri('http://example.com/2#foo'), $domDocument->getElementById('2.1')),
-            new Link(new Uri('http://example.com/3'), $domDocument->getElementById('3')),
+            new Link(new Uri('http://bar.example.com/3'), $domDocument->getElementById('3')),
         ];
 
         $this->linkCollection = new LinkCollection($this->links);
@@ -54,62 +56,173 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             [
-                'http://example.com/1',
-                'http://example.com/1',
+                'http://foo.example.com/1',
+                'http://foo.example.com/1',
                 'http://example.com/2',
                 'http://example.com/2#foo',
-                'http://example.com/3',
+                'http://bar.example.com/3',
             ],
             $this->linkCollection->getUris()
         );
     }
 
-    public function testGetUniqueUris()
+    /**
+     * @dataProvider getUniqueUrisDataProvider
+     */
+    public function testGetUniqueUris(bool $ignoreFragment, array $expectedUris)
     {
-        $this->assertEquals(
-            [
-                'http://example.com/1',
-                'http://example.com/2',
-                'http://example.com/2#foo',
-                'http://example.com/3',
+        $this->assertEquals($expectedUris, $this->linkCollection->getUniqueUris($ignoreFragment));
+    }
+
+    public function getUniqueUrisDataProvider(): array
+    {
+        return [
+            'ignoreFragment false' => [
+                'ignoreFragment' => false,
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://example.com/2',
+                    'http://example.com/2#foo',
+                    'http://bar.example.com/3',
+                ],
             ],
-            $this->linkCollection->getUniqueUris()
-        );
-    }
-
-    public function testGetUniqueUrisIgnoringFragment()
-    {
-        $this->assertEquals(
-            [
-                'http://example.com/1',
-                'http://example.com/2',
-                'http://example.com/3',
+            'ignoreFragment true' => [
+                'ignoreFragment' => true,
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://example.com/2',
+                    'http://bar.example.com/3',
+                ],
             ],
-            $this->linkCollection->getUniqueUris(true)
-        );
+        ];
     }
 
-    public function testFilterByElementName()
+    /**
+     * @dataProvider filterByElementNameDataProvider
+     */
+    public function testFilterByElementName(string $elementName, array $expectedUris)
     {
-        $aElementFilteredLinkCollection = $this->linkCollection->filterByElementName('a');
-
-        $this->assertInstanceOf(LinkCollection::class, $aElementFilteredLinkCollection);
-        $this->assertNotSame($this->linkCollection, $aElementFilteredLinkCollection);
-        $this->assertCount(4, $aElementFilteredLinkCollection);
-
-        $linkElementFilteredLinkCollection = $this->linkCollection->filterByElementName('link');
-
-        $this->assertInstanceOf(LinkCollection::class, $linkElementFilteredLinkCollection);
-        $this->assertNotSame($this->linkCollection, $linkElementFilteredLinkCollection);
-        $this->assertCount(1, $linkElementFilteredLinkCollection);
-    }
-
-    public function testFilterByAttribute()
-    {
-        $filteredLinkCollection = $this->linkCollection->filterByAttribute('href', "/1");
+        $filteredLinkCollection = $this->linkCollection->filterByElementName($elementName);
 
         $this->assertInstanceOf(LinkCollection::class, $filteredLinkCollection);
         $this->assertNotSame($this->linkCollection, $filteredLinkCollection);
-        $this->assertCount(2, $filteredLinkCollection);
+        $this->assertEquals($expectedUris, $filteredLinkCollection->getUris());
+    }
+
+    public function filterByElementNameDataProvider(): array
+    {
+        return [
+            'a' => [
+                'elementName' => 'a',
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://foo.example.com/1',
+                    'http://example.com/2',
+                    'http://example.com/2#foo',
+                ],
+            ],
+            'link' => [
+                'elementName' => 'link',
+                'expectedUris' => [
+                    'http://bar.example.com/3',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider filterByAttributeDataProvider
+     */
+    public function testFilterByAttribute(string $name, string $value, array $expectedUris)
+    {
+        $filteredLinkCollection = $this->linkCollection->filterByAttribute($name, $value);
+
+        $this->assertInstanceOf(LinkCollection::class, $filteredLinkCollection);
+        $this->assertNotSame($this->linkCollection, $filteredLinkCollection);
+        $this->assertEquals($expectedUris, $filteredLinkCollection->getUris());
+    }
+
+    public function filterByAttributeDataProvider(): array
+    {
+        return [
+            'href="/1"' => [
+                'name' => 'href',
+                'value' => '/1',
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://foo.example.com/1',
+                ],
+            ],
+            'id="3"' => [
+                'name' => 'id',
+                'value' => '3',
+                'expectedUris' => [
+                    'http://bar.example.com/3',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider filterByUriScopeDataProvider
+     */
+    public function testFilterByUriScope(callable $scopeComparerCreator, array $scope, array $expectedUris)
+    {
+        $scopeComparer = $scopeComparerCreator();
+
+        $filteredLinkCollection = $this->linkCollection->filterByUriScope(
+            $scopeComparer,
+            $scope
+        );
+
+        $this->assertInstanceOf(LinkCollection::class, $filteredLinkCollection);
+        $this->assertNotSame($this->linkCollection, $filteredLinkCollection);
+
+        $this->assertEquals(
+            $expectedUris,
+            $filteredLinkCollection->getUris()
+        );
+    }
+
+    public function filterByUriScopeDataProvider(): array
+    {
+        return [
+            'default scope comparer, http://foo.example.com/' => [
+                'scopeComparerCreator' => function () {
+                    return new ScopeComparer();
+                },
+                'scope' => [
+                    new Uri('http://foo.example.com/'),
+                ],
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://foo.example.com/1',
+                ],
+            ],
+            'default scope comparer, https://foo.example.com/' => [
+                'scopeComparerCreator' => function () {
+                    return new ScopeComparer();
+                },
+                'scope' => [
+                    new Uri('https://foo.example.com/'),
+                ],
+                'expectedUris' => [],
+            ],
+            'https/http equivalent scope comparer, https://foo.example.com/' => [
+                'scopeComparerCreator' => function () {
+                    $scopeComparer = new ScopeComparer();
+                    $scopeComparer->addEquivalentSchemes(['http', 'https']);
+
+                    return $scopeComparer;
+                },
+                'scope' => [
+                    new Uri('https://foo.example.com/'),
+                ],
+                'expectedUris' => [
+                    'http://foo.example.com/1',
+                    'http://foo.example.com/1',
+                ],
+            ],
+        ];
     }
 }
