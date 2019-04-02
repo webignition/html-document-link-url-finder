@@ -21,12 +21,21 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
 
+        $domDocument = new \DOMDocument();
+        $domDocument->loadHTML(
+            '<a href="/1" id="1">' .
+            '<a href="/1" id="1.1">' .
+            '<a href="/2" id="2">' .
+            '<a href="/2#foo" id="2.1">' .
+            '<a href="/3" id="3">'
+        );
+
         $this->links = [
-            new Link('http://example.com/1', '<a href="/1">'),
-            new Link('http://example.com/1', '<a href="/1" class="again">'),
-            new Link('http://example.com/2', '<a href="/2">>'),
-            new Link('http://example.com/2#foo', '<a href="/2#foo">>'),
-            new Link('http://example.com/3', '<a href="/3">>'),
+            new Link('http://example.com/1', $domDocument->getElementById('1')),
+            new Link('http://example.com/1', $domDocument->getElementById('1.1')),
+            new Link('http://example.com/2', $domDocument->getElementById('2')),
+            new Link('http://example.com/2#foo', $domDocument->getElementById('2.1')),
+            new Link('http://example.com/3', $domDocument->getElementById('3')),
         ];
 
         $this->linkCollection = new LinkCollection($this->links);
