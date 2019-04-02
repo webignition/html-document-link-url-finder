@@ -87,44 +87,40 @@ class LinkCollection implements \Iterator, \Countable
 
     public function filterByElementName(string $name): LinkCollection
     {
-        $comparatorName = trim(strtolower($name));
-        $filteredLinks = [];
+        $name = trim(strtolower($name));
 
-        foreach ($this as $link) {
-            $element = $link->getElement();
-
-            if (strtolower($element->nodeName) === $comparatorName) {
-                $filteredLinks[] = $link;
-            }
-        }
-
-        return new LinkCollection($filteredLinks);
+        return $this->filter(function (Link $link) use ($name) {
+            return strtolower($link->getElement()->nodeName) === $name;
+        });
     }
 
     public function filterByAttribute(string $name, string $value): LinkCollection
     {
-        $filteredLinks = [];
-
-        foreach ($this as $link) {
-            $element = $link->getElement();
-
-            if ($element->getAttribute($name) === $value) {
-                $filteredLinks[] = $link;
-            }
-        }
-
-        return new LinkCollection($filteredLinks);
+        return $this->filter(function (Link $link) use ($name, $value) {
+            return $link->getElement()->getAttribute($name) === $value;
+        });
     }
 
     public function filterByUriScope(ScopeComparer $scopeComparer, array $scopes): LinkCollection
     {
+        return $this->filter(function (Link $link) use ($scopeComparer, $scopes) {
+            foreach ($scopes as $scope) {
+                if ($scopeComparer->isInScope($scope, $link->getUri())) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    private function filter(callable $matcher)
+    {
         $filteredLinks = [];
 
-        foreach ($scopes as $scope) {
-            foreach ($this as $link) {
-                if ($scopeComparer->isInScope($scope, $link->getUri())) {
-                    $filteredLinks[] = $link;
-                }
+        foreach ($this as $link) {
+            if ($matcher($link)) {
+                $filteredLinks[] = $link;
             }
         }
 
