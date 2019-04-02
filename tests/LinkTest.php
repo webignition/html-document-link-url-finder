@@ -3,6 +3,7 @@
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
 use webignition\HtmlDocumentLinkUrlFinder\Link;
+use webignition\Uri\Uri;
 
 class LinkTest extends \PHPUnit\Framework\TestCase
 {
@@ -13,12 +14,12 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         $domDocument = new \DOMDocument();
         $domDocument->loadHTML($elementSource);
 
-        $url = 'http://example.com/';
+        $uri = new Uri('http://example.com/');
         $element = $domDocument->getElementById('example');
 
-        $link = new Link($url, $element);
+        $link = new Link($uri, $element);
 
-        $this->assertSame($url, $link->getUrl());
+        $this->assertSame($uri, $link->getUri());
         $this->assertSame($element, $link->getElement());
         $this->assertEquals($elementSource, $link->getElementAsString());
     }
