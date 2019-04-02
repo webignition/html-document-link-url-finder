@@ -27,7 +27,7 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
             '<a href="/1" id="1.1">' .
             '<a href="/2" id="2">' .
             '<a href="/2#foo" id="2.1">' .
-            '<a href="/3" id="3">'
+            '<link href="/3" id="3">'
         );
 
         $this->links = [
@@ -86,5 +86,20 @@ class LinkCollectionTest extends \PHPUnit\Framework\TestCase
             ],
             $this->linkCollection->getUniqueUrls(true)
         );
+    }
+
+    public function testFilterByElementName()
+    {
+        $aElementFilteredLinkCollection = $this->linkCollection->filterByElementName('a');
+
+        $this->assertInstanceOf(LinkCollection::class, $aElementFilteredLinkCollection);
+        $this->assertNotSame($this->linkCollection, $aElementFilteredLinkCollection);
+        $this->assertCount(4, $aElementFilteredLinkCollection);
+
+        $linkElementFilteredLinkCollection = $this->linkCollection->filterByElementName('link');
+
+        $this->assertInstanceOf(LinkCollection::class, $linkElementFilteredLinkCollection);
+        $this->assertNotSame($this->linkCollection, $linkElementFilteredLinkCollection);
+        $this->assertCount(1, $linkElementFilteredLinkCollection);
     }
 }
