@@ -46,6 +46,27 @@ class HtmlDocumentLinkUrlFinder
         $this->urlScopeComparer = new ScopeComparer();
     }
 
+    public function getLinkCollection(): LinkCollection
+    {
+        $links = [];
+
+        if (!$this->configuration->hasSourceContent()) {
+            return new LinkCollection($links);
+        }
+
+        $urls = $this->getAllUrls();
+        $elements = $this->getRawElements();
+
+        foreach ($urls as $index => $url) {
+            $links[] = new Link(
+                new Uri($url),
+                $elements[$index]
+            );
+        }
+
+        return new LinkCollection($links);
+    }
+
     public function setConfiguration(Configuration $configuration)
     {
         $this->configuration = $configuration;

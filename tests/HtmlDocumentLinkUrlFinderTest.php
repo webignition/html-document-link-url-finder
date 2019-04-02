@@ -1,4 +1,5 @@
 <?php
+/** @noinspection PhpDocSignatureInspection */
 
 namespace webignition\Tests\HtmlDocumentLinkUrlFinder;
 
@@ -7,6 +8,7 @@ use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 use webignition\HtmlDocumentLinkUrlFinder\Configuration;
 use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
+use webignition\HtmlDocumentLinkUrlFinder\LinkCollection;
 use webignition\WebResource\Exception\InvalidContentTypeException;
 use webignition\WebResource\WebPage\WebPage;
 
@@ -24,6 +26,26 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     {
         parent::setUp();
         $this->htmlDocumentLinkUrlFinder = new HtmlDocumentLinkUrlFinder();
+    }
+
+    /**
+     * @dataProvider getAllDataProvider
+     */
+    public function testGetLinkCollection(Configuration $configuration, array $expectedLinkCollectionData)
+    {
+        $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
+
+        $linkCollection = $this->htmlDocumentLinkUrlFinder->getLinkCollection();
+
+        $this->assertInstanceOf(LinkCollection::class, $linkCollection);
+        $this->assertCount(count($expectedLinkCollectionData), $linkCollection);
+
+        foreach ($linkCollection as $index => $link) {
+            $expectedLinkData = $expectedLinkCollectionData[$index];
+
+            $this->assertEquals($expectedLinkData['url'], $link->getUri());
+            $this->assertEquals($expectedLinkData['element'], $link->getElementAsString());
+        }
     }
 
     /**
