@@ -11,7 +11,6 @@ class Configuration
     const CONFIG_KEY_SOURCE = 'source';
     const CONFIG_KEY_SOURCE_URL = 'source-url';
     const CONFIG_KEY_ELEMENT_SCOPE = 'element-scope';
-    const CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON = 'ignore-fragment-in-url-comparison';
     const CONFIG_KEY_IGNORE_EMPTY_HREF = 'ignore-empty-href';
 
     /**
@@ -30,11 +29,6 @@ class Configuration
     private $sourceUrl = null;
 
     /**
-     * @var bool
-     */
-    private $ignoreFragmentInUrlComparison = false;
-
-    /**
      * @param array $configurationValues
      */
     public function __construct(array $configurationValues = [])
@@ -46,22 +40,6 @@ class Configuration
         if (isset($configurationValues[self::CONFIG_KEY_SOURCE_URL])) {
             $this->setSourceUrl($configurationValues[self::CONFIG_KEY_SOURCE_URL]);
         }
-
-        if (isset($configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON])) {
-            $this->setIgnoreFragmentInUrlComparison(
-                $configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON]
-            );
-        }
-    }
-
-    public function setIgnoreFragmentInUrlComparison(bool $ignoreFragmentInUrlComparison)
-    {
-        $this->ignoreFragmentInUrlComparison = $ignoreFragmentInUrlComparison;
-    }
-
-    public function getIgnoreFragmentInUrlComparison(): bool
-    {
-        return $this->ignoreFragmentInUrlComparison;
     }
 
     public function setSource(WebPageInterface $webPage)
