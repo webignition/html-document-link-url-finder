@@ -43,7 +43,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($expectedSource, $configuration->getSource());
         $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
-;
     }
 
     public function createDataProvider(): array
