@@ -1,49 +1,64 @@
 HTML Document Link URL Finder
 =============================
 
-Get a collection of full absolute URLs for links in an HTML document.
-
-Building
---------
-
-This project has external dependencies managed with [composer][1]. Get and install this first.
-
-    # Make a suitable project directory
-    mkdir ~/html-document-link-url-finder && cd ~/html-document-link-url-finder
-
-    # Clone repository
-    git clone git@github.com:webignition/html-document-link-url-finder.git .
-
-    # Retrieve/update dependencies
-    composer.phar update
+Get a collection of absolute urls, with their associated elements, for links in a HTML document.
 
 Usage
 -----
 
-### The "Hello World" example
+### Getting a LinkCollection from a WebPage
 
 ```php
-$sourceUrl = 'http://www.google.co.uk/search?q=Hello+World';
+use webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder;
+use webignition\WebResource\WebPage\WebPage;
 
-echo "Finding link URLs in ".$sourceUrl."\n";
+$webPageUrl = 'http://www.google.co.uk/search?q=Hello+World';
+$webPage = WebPage::createFromContent((string) file_get_contents($sourceUrl));
 
-$sourceContent = file_get_contents($sourceUrl);
-
-$finder = new \webignition\HtmlDocumentLinkUrlFinder\HtmlDocumentLinkUrlFinder();
-$finder->getConfiguration()->setSourceContent($sourceContent);
-$finder->getConfiguration()->setSourceUrl($sourceUrl);
-
-$urls = $finder->getAllUrls();
-
-echo "Found ".count($urls)." urls\n";
-
-if (isset($_GET['verbose'])) {
-    foreach ($urls as $url) {
-        echo $url . "\n";
-    }
-}
-
-echo "\n";
+$finder = new HtmlDocumentLinkUrlFinder();
+$linkCollection = $finder->getLinkCollection($webPage, $webPageUrl);
 ```
 
-[1]: http://getcomposer.org/
+### Accessing a LinkCollection
+
+```php
+use Psr\Http\Message\UriInterface;
+
+// Assuming $linkCollection from previous example
+
+// Iterating
+foreach ($linkCollection as $link) {
+    $link->getUri();      // UriInterface instance
+    $link->getElement();  // \DOMElement instance
+}
+
+// Counting
+count($linkCollection);
+
+// Get URIs only
+$linkCollection->getUris(); // array of UriInterface
+
+// Get unique URIs only
+$linkCollection->getUniqueUris(); // array of UriInterface
+```
+
+### Filtering a LinkCollection
+
+All `LinkCollection::filterBy*()` methods return a new `LinkCollection` instance.
+
+```php
+use webignition\Uri\ScopeComparer;
+
+// Filtering
+$anchorLinks = $linkCollection->filterByElementName('a');
+$elementsWithRelStylesheetAttribute = $linkCollection->filterByAttribute('rel', 'stylesheet');
+$linksWithinUrlScope = $linkCollection->filterByUrlScope(
+    new ScopeComparer(),
+    ['http://example.com/']
+);
+
+$linkElementsWithRelStylesheetAttribute = $linkCollection
+    ->filterByElementName('link')
+    ->filterByAttribute('rel', 'stylesheet');
+
+```
