@@ -31,11 +31,9 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getLinkCollectionDataProvider
      */
-    public function testGetLinkCollection(Configuration $configuration, array $expectedLinkCollectionData)
+    public function testGetLinkCollection(WebPage $webPage, string $webPageUrl, array $expectedLinkCollectionData)
     {
-        $this->htmlDocumentLinkUrlFinder->setConfiguration($configuration);
-
-        $linkCollection = $this->htmlDocumentLinkUrlFinder->getLinkCollection();
+        $linkCollection = $this->htmlDocumentLinkUrlFinder->getLinkCollection($webPage, $webPageUrl);
 
         $this->assertInstanceOf(LinkCollection::class, $linkCollection);
         $this->assertCount(count($expectedLinkCollectionData), $linkCollection);
@@ -51,43 +49,33 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
     public function getLinkCollectionDataProvider(): array
     {
         return [
-            'no source content' => [
-                'configuration' => new Configuration(),
-                'expectedLinkCollectionData' => [],
-            ],
             'empty source content' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage('', 'utf8'),
-                ]),
+                'webPage' => $this->createWebPage('', 'utf8'),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [],
             ],
             'empty body' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('empty-body'),
-                        'utf-8'
-                    ),
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('empty-body'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [],
             ],
             'single anchor lacking href attribute' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('missing-url'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('missing-url'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [],
             ],
             'single anchor; leading null bytes' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('leading-null-bytes'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('leading-null-bytes'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/foo',
@@ -96,13 +84,11 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'default' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('example01'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('example01'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://cdn.example.com/foo.css',
@@ -179,13 +165,11 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'base element' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('base-element'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/foo',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('base-element'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/foo',
                 'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://base.example.com/foobar/foo/bar.html',
@@ -210,13 +194,11 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'empty base element' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('empty-base-element'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/foo',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('empty-base-element'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/foo',
                 'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/foo/bar.html',
@@ -225,13 +207,11 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'badly-formed markup with JS concatenated URLs' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('badly-formed-js-urls'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('badly-formed-js-urls'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/',
@@ -244,13 +224,11 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'ignore link rel=dns-prefetch' => [
-                'configuration' => new Configuration([
-                    Configuration::CONFIG_KEY_SOURCE => $this->createWebPage(
-                        $this->loadHtmlDocumentFixture('link-rel-equals-dns-prefetch'),
-                        'utf-8'
-                    ),
-                    Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                ]),
+                'webPage' => $this->createWebPage(
+                    $this->loadHtmlDocumentFixture('link-rel-equals-dns-prefetch'),
+                    'utf-8'
+                ),
+                'webPageUrl' => 'http://example.com/',
                 'expectedLinkCollectionData' => [
                     [
                         'url' => 'http://example.com/main.css',
