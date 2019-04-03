@@ -5,7 +5,6 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 use Psr\Http\Message\UriInterface;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\Uri\Normalizer;
-use webignition\Uri\ScopeComparer;
 use webignition\Uri\Uri;
 use webignition\WebResource\WebPage\WebPage;
 
@@ -15,26 +14,6 @@ class HtmlDocumentLinkUrlFinder
     const SRC_ATTRIBUTE_NAME  = 'src';
 
     /**
-     * @var array
-     */
-    private $elementsWithUrlAttributes = null;
-
-    /**
-     * @var ScopeComparer
-     */
-    private $urlScopeComparer = null;
-
-    /**
-     * @var string
-     */
-    private $baseUrl = null;
-
-    /**
-     * @var Configuration
-     */
-    private $configuration = null;
-
-    /**
      * @var ElementExcluder
      */
     private $elementExcluder;
@@ -42,217 +21,49 @@ class HtmlDocumentLinkUrlFinder
     public function __construct()
     {
         $this->elementExcluder = new ElementExcluder();
-        $this->configuration = new Configuration();
-        $this->urlScopeComparer = new ScopeComparer();
     }
 
-    public function setConfiguration(Configuration $configuration)
+    public function getLinkCollection(WebPage $webPage, string $webPageUrl): LinkCollection
     {
-        $this->configuration = $configuration;
-    }
+        $links = [];
 
-    public function getConfiguration(): Configuration
-    {
-        return $this->configuration;
-    }
+        $webPageBaseUrl = $webPage->getBaseUrl();
+        $baseUri = new Uri((empty($webPageBaseUrl)) ? $webPageUrl : $webPageBaseUrl);
 
-    public function getUrlScopeComparer(): ScopeComparer
-    {
-        return $this->urlScopeComparer;
-    }
+        $elements = $this->filterElements(
+            $webPage->getInspector()->querySelectorAll('[href], [src]')
+        );
+        $uris = $this->getUrisFromElements($elements, $baseUri);
 
-    /**
-     * @return string[]
-     */
-    public function getUniqueUrls(): array
-    {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
+        foreach ($uris as $index => $uri) {
+            $links[] = new Link($uri, $elements[$index]);
         }
 
-        $allUrls = $this->getAllUrls();
-        $urls = [];
-
-        foreach ($allUrls as $url) {
-            if ($this->configuration->getIgnoreFragmentInUrlComparison()) {
-                $url = $this->getUniquenessComparisonUrl($url);
-            }
-
-            if (!in_array($url, $urls)) {
-                $urls[] = $url;
-            }
-        }
-
-        return $urls;
-    }
-
-    private function getUniquenessComparisonUrl(string $url): string
-    {
-        $uri = new Uri($url);
-
-        if ('' === $uri->getFragment()) {
-            return $url;
-        }
-
-        $uri = $uri->withFragment('');
-
-        return (string) $uri;
+        return new LinkCollection($links);
     }
 
     /**
-     * @return string[]
+     * @param \DOMElement[] $elements
+     * @param UriInterface $baseUri
+     *
+     * @return UriInterface[]
      */
-    public function getAllUrls(): array
+    private function getUrisFromElements(array $elements, UriInterface $baseUri): array
     {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        if (!$this->configuration->hasSourceContent()) {
-            return [];
-        }
-
-        $urls = [];
-        $elements = $this->getRawElements();
-
-        if (empty($elements)) {
-            return [];
-        }
-
-        $baseUri = new Uri($this->getBaseUrl());
+        $uris = [];
 
         foreach ($elements as $element) {
-            $uri = AbsoluteUrlDeriver::derive(
-                $baseUri,
-                new Uri($this->getUrlValueFromElement($element))
-            );
+            $elementUrlValue = $element->hasAttribute(self::HREF_ATTRIBUTE_NAME)
+                ? $element->getAttribute(self::HREF_ATTRIBUTE_NAME)
+                : $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
 
+            $uri = AbsoluteUrlDeriver::derive($baseUri, new Uri($elementUrlValue));
             $uri = Normalizer::normalize($uri);
 
-            $urls[] = (string) $uri;
+            $uris[] = $uri;
         }
 
-        return $urls;
-    }
-
-    public function getAll(): array
-    {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        if (!$this->configuration->hasSourceContent()) {
-            return [];
-        }
-
-        $urls = $this->getAllUrls();
-        $elements = $this->getElements();
-
-        $result = [];
-
-        foreach ($urls as $index => $url) {
-            $result[] = [
-                'url' => $url,
-                'element' => $elements[$index]
-            ];
-        }
-
-        return $result;
-    }
-
-    private function reset()
-    {
-        $this->elementsWithUrlAttributes = null;
-        $this->configuration->clearReset();
-    }
-
-    public function getElements(): array
-    {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        if (!$this->configuration->hasSourceContent()) {
-            return [];
-        }
-
-        $elements = [];
-        $rawElements = $this->getRawElements();
-
-        foreach ($rawElements as $element) {
-            /* @var \DOMElement $element */
-            $elements[] = trim($element->ownerDocument->saveHTML($element));
-        }
-
-        return $elements;
-    }
-
-    private function getRawElements(): array
-    {
-        $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
-        $elements = [];
-
-        if (empty($elementsWithUrlAttributes)) {
-            return [];
-        }
-
-        $baseUri = new Uri($this->configuration->getSourceUrl());
-
-        foreach ($elementsWithUrlAttributes as $element) {
-            $discoveredUri = AbsoluteUrlDeriver::derive(
-                $baseUri,
-                new Uri($this->getUrlValueFromElement($element))
-            );
-
-            $discoveredUri = Normalizer::normalize($discoveredUri);
-
-            if ($this->isUrlInScope($discoveredUri)) {
-                $elements[] = $element;
-            }
-        }
-
-        return $elements;
-    }
-
-    private function getUrlValueFromElement(\DOMElement $element): string
-    {
-        if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
-            return $element->getAttribute(self::HREF_ATTRIBUTE_NAME);
-        }
-
-        return $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
-    }
-
-    private function isUrlInScope(UriInterface $discoveredUrl): bool
-    {
-        if (!$this->configuration->hasUrlScope()) {
-            return true;
-        }
-
-        foreach ($this->configuration->getUrlScope() as $scopeUrl) {
-            if ($this->getUrlScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public function hasUrls(): bool
-    {
-        return count($this->getUniqueUrls()) > 0;
-    }
-
-    private function getElementsWithUrlAttributes(): array
-    {
-        if (empty($this->elementsWithUrlAttributes)) {
-            $elements = $this->findElementsWithUrlAttributes();
-            $filteredElements = $this->filterElements($elements);
-
-            $this->elementsWithUrlAttributes = $filteredElements;
-        }
-
-        return $this->elementsWithUrlAttributes;
+        return $uris;
     }
 
     /**
@@ -265,61 +76,12 @@ class HtmlDocumentLinkUrlFinder
         $filteredElements = [];
 
         foreach ($elements as $element) {
-            $includeElement = $this->isElementInNameScope($element);
-            $includeElement = $includeElement && !$this->elementExcluder->isExcluded($element);
-            $includeElement = $includeElement && $this->hasUrlAttribute($element);
-            $includeElement = $includeElement && $this->isElementInAttributeScope($element);
-
-            if ($includeElement) {
+            if (!$this->elementExcluder->isExcluded($element) && $this->hasUrlAttribute($element)) {
                 $filteredElements[] = $element;
             }
         }
 
         return $filteredElements;
-    }
-
-    private function isElementInNameScope(\DOMElement $element): bool
-    {
-        $elementScope = $this->configuration->getElementScope();
-
-        if (empty($elementScope)) {
-            return true;
-        }
-
-        $isInScope = false;
-
-        foreach ($elementScope as $nodeName) {
-            /* @var \DOMElement $element */
-            if ($element->nodeName === $nodeName) {
-                $isInScope = true;
-            }
-        }
-
-        return $isInScope;
-    }
-
-    private function isElementInAttributeScope(\DOMElement $element): bool
-    {
-        $attributeScopeName = $this->configuration->getAttributeScopeName();
-        $attributeScopeValue = $this->configuration->getAttributeScopeValue();
-        $hasAttributeScope = !empty($attributeScopeName);
-
-        if (!$hasAttributeScope) {
-            return true;
-        }
-
-        return $element->getAttribute($attributeScopeName) == $attributeScopeValue;
-    }
-
-
-    private function findElementsWithUrlAttributes(): array
-    {
-        /* @var WebPage $webPage */
-        $webPage = $this->configuration->getSource();
-
-        $inspector = $webPage->getInspector();
-
-        return $inspector->querySelectorAll('[href], [src]');
     }
 
     private function hasUrlAttribute(\DOMElement $element): bool
@@ -333,10 +95,6 @@ class HtmlDocumentLinkUrlFinder
             $attributeValue = $element->getAttribute(self::HREF_ATTRIBUTE_NAME);
         } elseif ($hasSrcAttribute) {
             $attributeValue = $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
-        }
-
-        if (!$this->hasNonEmptyUrlAttribute($attributeValue)) {
-            return false;
         }
 
         if ($this->looksLikeConcatenatedJsString($attributeValue)) {
@@ -375,26 +133,5 @@ class HtmlDocumentLinkUrlFinder
         $pattern = '/'.$patternBody.'/i';
 
         return preg_match($pattern, $url) > 0;
-    }
-
-    private function hasNonEmptyUrlAttribute(string $attributeValue): bool
-    {
-        return $this->configuration->getIgnoreEmptyHref()
-            ? !empty(trim($attributeValue))
-            : true;
-    }
-
-    private function getBaseUrl(): string
-    {
-        if (is_null($this->baseUrl)) {
-            /* @var WebPage $webPage */
-            $webPage = $this->configuration->getSource();
-
-            $webPageBaseUrl = $webPage->getBaseUrl();
-
-            $this->baseUrl = (empty($webPageBaseUrl)) ? $this->configuration->getSourceUrl() : $webPageBaseUrl;
-        }
-
-        return $this->baseUrl;
     }
 }

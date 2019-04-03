@@ -1,0 +1,10 @@
+includes:
+  - vendor/phpstan/phpstan-mockery/extension.neon
+
+parameters:
+  ignoreErrors:
+    - message: '#createWebPage\(\) should return webignition\\WebResource\\WebPage\\WebPage#'
+      path: %currentWorkingDirectory%/tests/HtmlDocumentLinkUrlFinderTest
+
+    - message: '#expects DOMElement, DOMElement\|null#'
+      path: %currentWorkingDirectory%/tests
