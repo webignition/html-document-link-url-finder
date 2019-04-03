@@ -90,10 +90,7 @@ class HtmlDocumentLinkUrlFinder
         $filteredElements = [];
 
         foreach ($elements as $element) {
-            $includeElement = !$this->elementExcluder->isExcluded($element);
-            $includeElement = $includeElement && $this->hasUrlAttribute($element);
-
-            if ($includeElement) {
+            if (!$this->elementExcluder->isExcluded($element) && $this->hasUrlAttribute($element)) {
                 $filteredElements[] = $element;
             }
         }
