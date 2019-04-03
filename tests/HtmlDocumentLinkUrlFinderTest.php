@@ -313,6 +313,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
 
     private function loadHtmlDocumentFixture(string $name): string
     {
-        return file_get_contents(__DIR__ . '/fixtures/html-documents/' . $name . '.html');
+        return (string) file_get_contents(__DIR__ . '/fixtures/html-documents/' . $name . '.html');
     }
 }
