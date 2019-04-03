@@ -36,10 +36,6 @@ class ElementExcluder
         $matches = true;
 
         foreach ($attributeMatchers as $name => $value) {
-            if (!$element->hasAttribute($name)) {
-                $matches = false;
-            }
-
             if ($element->getAttribute($name) !== $value) {
                 $matches = false;
             }
