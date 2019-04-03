@@ -33,24 +33,18 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @param array $configurationValues
      * @param string $expectedSource
      * @param string $expectedSourceUrl
-     * @param string $expectedAttributeScopeName
-     * @param string $expectedAttributeScopeValue
      * @param bool $expectedIgnoreFragmentInUrlComparison
      */
     public function testCreate(
         array $configurationValues,
         string $expectedSource,
         string $expectedSourceUrl,
-        ?string $expectedAttributeScopeName,
-        ?string $expectedAttributeScopeValue,
         bool $expectedIgnoreFragmentInUrlComparison
     ) {
         $configuration = new Configuration($configurationValues);
 
         $this->assertEquals($expectedSource, $configuration->getSource());
         $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
-        $this->assertEquals($expectedAttributeScopeName, $configuration->getAttributeScopeName());
-        $this->assertEquals($expectedAttributeScopeValue, $configuration->getAttributeScopeValue());
         $this->assertEquals($expectedIgnoreFragmentInUrlComparison, $configuration->getIgnoreFragmentInUrlComparison());
     }
 
@@ -63,8 +57,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'configurationValues' => [],
                 'expectedSource' => '',
                 'expectedSourceUrl' => '',
-                'expectedAttributeScopeName' => null,
-                'expectedAttributeScopeValue' => null,
                 'expectedIgnoreFragmentInUrlComparison' => false,
             ],
             'non-default' => [
@@ -72,13 +64,9 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                     Configuration::CONFIG_KEY_SOURCE => $webPage,
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
                     Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
-                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'name',
-                    Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'value',
                 ],
                 'expectedSource' => $webPage,
                 'expectedSourceUrl' => 'http://example.com/',
-                'expectedAttributeScopeName' => 'name',
-                'expectedAttributeScopeValue' => 'value',
                 'expectedIgnoreFragmentInUrlComparison' => true,
             ],
         ];

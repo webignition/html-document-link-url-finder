@@ -12,8 +12,6 @@ class Configuration
     const CONFIG_KEY_SOURCE_URL = 'source-url';
     const CONFIG_KEY_ELEMENT_SCOPE = 'element-scope';
     const CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON = 'ignore-fragment-in-url-comparison';
-    const CONFIG_KEY_ATTRIBUTE_SCOPE_NAME = 'attribute-scope-name';
-    const CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE = 'attribute-scope-value';
     const CONFIG_KEY_IGNORE_EMPTY_HREF = 'ignore-empty-href';
 
     /**
@@ -30,16 +28,6 @@ class Configuration
      * @var string
      */
     private $sourceUrl = null;
-
-    /**
-     * @var string
-     */
-    private $attributeScopeName = null;
-
-    /**
-     * @var string
-     */
-    private $attributeScopeValue = null;
 
     /**
      * @var bool
@@ -59,38 +47,11 @@ class Configuration
             $this->setSourceUrl($configurationValues[self::CONFIG_KEY_SOURCE_URL]);
         }
 
-        $hasAttributeScopeName = isset($configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME]);
-        $hasAttributeScopeValue = isset($configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE]);
-
-        if ($hasAttributeScopeName && $hasAttributeScopeValue) {
-            $this->setAttributeScope(
-                $configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME],
-                $configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE]
-            );
-        }
-
         if (isset($configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON])) {
             $this->setIgnoreFragmentInUrlComparison(
                 $configurationValues[self::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON]
             );
         }
-    }
-
-    public function setAttributeScope(string $name, string $value)
-    {
-        $this->attributeScopeName = $name;
-        $this->attributeScopeValue = $value;
-        $this->requiresReset = true;
-    }
-
-    public function getAttributeScopeName(): ?string
-    {
-        return $this->attributeScopeName;
-    }
-
-    public function getAttributeScopeValue(): ?string
-    {
-        return $this->attributeScopeValue;
     }
 
     public function setIgnoreFragmentInUrlComparison(bool $ignoreFragmentInUrlComparison)
