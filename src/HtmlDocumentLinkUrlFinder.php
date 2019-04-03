@@ -2,7 +2,6 @@
 
 namespace webignition\HtmlDocumentLinkUrlFinder;
 
-use Psr\Http\Message\UriInterface;
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\Uri\Normalizer;
 use webignition\Uri\ScopeComparer;
@@ -77,11 +76,6 @@ class HtmlDocumentLinkUrlFinder
         return $this->configuration;
     }
 
-    public function getUrlScopeComparer(): ScopeComparer
-    {
-        return $this->urlScopeComparer;
-    }
-
     /**
      * @return string[]
      */
@@ -133,19 +127,8 @@ class HtmlDocumentLinkUrlFinder
             return [];
         }
 
-        $baseUri = new Uri($this->configuration->getSourceUrl());
-
         foreach ($elementsWithUrlAttributes as $element) {
-            $discoveredUri = AbsoluteUrlDeriver::derive(
-                $baseUri,
-                new Uri($this->getUrlValueFromElement($element))
-            );
-
-            $discoveredUri = Normalizer::normalize($discoveredUri);
-
-            if ($this->isUrlInScope($discoveredUri)) {
-                $elements[] = $element;
-            }
+            $elements[] = $element;
         }
 
         return $elements;
@@ -158,21 +141,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
-    }
-
-    private function isUrlInScope(UriInterface $discoveredUrl): bool
-    {
-        if (!$this->configuration->hasUrlScope()) {
-            return true;
-        }
-
-        foreach ($this->configuration->getUrlScope() as $scopeUrl) {
-            if ($this->getUrlScopeComparer()->isInScope($scopeUrl, $discoveredUrl)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private function getElementsWithUrlAttributes(): array
