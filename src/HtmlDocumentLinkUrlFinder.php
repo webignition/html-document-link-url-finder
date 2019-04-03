@@ -33,7 +33,9 @@ class HtmlDocumentLinkUrlFinder
     {
         $links = [];
 
-        $baseUri = $this->getBaseUri($webPage, $webPageUrl);
+        $webPageBaseUrl = $webPage->getBaseUrl();
+        $baseUri = new Uri((empty($webPageBaseUrl)) ? $webPageUrl : $webPageBaseUrl);
+
         $elements = $this->filterElements(
             $webPage->getInspector()->querySelectorAll('[href], [src]')
         );
@@ -147,15 +149,5 @@ class HtmlDocumentLinkUrlFinder
         $pattern = '/'.$patternBody.'/i';
 
         return preg_match($pattern, $url) > 0;
-    }
-
-    private function getBaseUri(WebPage $webPage, string $webPageUrl): UriInterface
-    {
-        $webPageBaseUrl = $webPage->getBaseUrl();
-        $baseUrl = (empty($webPageBaseUrl))
-            ? $webPageUrl
-            : $webPageBaseUrl;
-
-        return new Uri($baseUrl);
     }
 }
