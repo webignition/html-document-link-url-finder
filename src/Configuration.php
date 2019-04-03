@@ -10,7 +10,6 @@ class Configuration
 {
     const CONFIG_KEY_SOURCE = 'source';
     const CONFIG_KEY_SOURCE_URL = 'source-url';
-    const CONFIG_KEY_URL_SCOPE = 'url-scope';
     const CONFIG_KEY_ELEMENT_SCOPE = 'element-scope';
     const CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON = 'ignore-fragment-in-url-comparison';
     const CONFIG_KEY_ATTRIBUTE_SCOPE_NAME = 'attribute-scope-name';
@@ -31,11 +30,6 @@ class Configuration
      * @var string
      */
     private $sourceUrl = null;
-
-    /**
-     * @var array
-     */
-    private $urlScope = [];
 
     /**
      * @var array
@@ -68,10 +62,6 @@ class Configuration
 
         if (isset($configurationValues[self::CONFIG_KEY_SOURCE_URL])) {
             $this->setSourceUrl($configurationValues[self::CONFIG_KEY_SOURCE_URL]);
-        }
-
-        if (isset($configurationValues[self::CONFIG_KEY_URL_SCOPE])) {
-            $this->setUrlScope($configurationValues[self::CONFIG_KEY_URL_SCOPE]);
         }
 
         if (isset($configurationValues[self::CONFIG_KEY_ELEMENT_SCOPE])) {
@@ -150,39 +140,6 @@ class Configuration
     public function clearReset()
     {
         $this->requiresReset = false;
-    }
-
-    /**
-     * @param string|array $scope
-     */
-    public function setUrlScope($scope)
-    {
-        if (is_string($scope)) {
-            $this->urlScope = array(new Uri($scope));
-        }
-
-        if (is_array($scope)) {
-            $this->urlScope = array();
-            foreach ($scope as $url) {
-                $this->urlScope[] = new Uri($url);
-            }
-        }
-
-        foreach ($this->urlScope as $index => $uri) {
-            $this->urlScope[$index] = Normalizer::normalize($uri);
-        }
-
-        $this->requiresReset = true;
-    }
-
-    public function getUrlScope(): array
-    {
-        return $this->urlScope;
-    }
-
-    public function hasUrlScope(): bool
-    {
-        return !empty($this->urlScope);
     }
 
     /**

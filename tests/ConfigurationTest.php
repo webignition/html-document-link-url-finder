@@ -33,7 +33,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @param array $configurationValues
      * @param string $expectedSource
      * @param string $expectedSourceUrl
-     * @param array $expectedUrlScope
      * @param array $expectedElementScope
      * @param string $expectedAttributeScopeName
      * @param string $expectedAttributeScopeValue
@@ -43,7 +42,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         array $configurationValues,
         string $expectedSource,
         string $expectedSourceUrl,
-        array $expectedUrlScope,
         array $expectedElementScope,
         ?string $expectedAttributeScopeName,
         ?string $expectedAttributeScopeValue,
@@ -53,7 +51,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($expectedSource, $configuration->getSource());
         $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
-        $this->assertEquals($expectedUrlScope, $configuration->getUrlScope());
         $this->assertEquals($expectedElementScope, $configuration->getElementScope());
         $this->assertEquals($expectedAttributeScopeName, $configuration->getAttributeScopeName());
         $this->assertEquals($expectedAttributeScopeValue, $configuration->getAttributeScopeValue());
@@ -69,7 +66,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'configurationValues' => [],
                 'expectedSource' => '',
                 'expectedSourceUrl' => '',
-                'expectedUrlScope' => [],
                 'expectedElementScope' => [],
                 'expectedAttributeScopeName' => null,
                 'expectedAttributeScopeValue' => null,
@@ -79,7 +75,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'configurationValues' => [
                     Configuration::CONFIG_KEY_SOURCE => $webPage,
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                    Configuration::CONFIG_KEY_URL_SCOPE => 'http://example.com/',
                     Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'a',
                     Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'name',
@@ -87,9 +82,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expectedSource' => $webPage,
                 'expectedSourceUrl' => 'http://example.com/',
-                'expectedUrlScope' => [
-                    'http://example.com/',
-                ],
                 'expectedElementScope' => [
                     'a',
                 ],
@@ -225,46 +217,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
             'default' => [
                 'sourceUrl' => 'http://example.com/',
                 'expectedSourceUrl' => 'http://example.com/',
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider urlScopeDataProvider
-     *
-     * @param string|array $scope
-     * @param array $expectedScope
-     */
-    public function testUrlScope($scope, array $expectedScope)
-    {
-        $this->assertFalse($this->configuration->requiresReset());
-        $this->assertFalse($this->configuration->hasUrlScope());
-
-        $this->configuration->setUrlScope($scope);
-        $this->assertEquals($expectedScope, $this->configuration->getUrlScope());
-        $this->assertTrue($this->configuration->hasUrlScope());
-
-        $this->assertTrue($this->configuration->requiresReset());
-    }
-
-    public function urlScopeDataProvider(): array
-    {
-        return [
-            'string' => [
-                'scope' => 'http://example.com/',
-                'expectedScope' => [
-                    'http://example.com/',
-                ],
-            ],
-            'array' => [
-                'scope' => [
-                    'http://example.com/',
-                    'http://example.org/',
-                ],
-                'expectedScope' => [
-                    'http://example.com/',
-                    'http://example.org/',
-                ],
             ],
         ];
     }
