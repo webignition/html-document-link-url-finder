@@ -4,7 +4,6 @@ namespace webignition\HtmlDocumentLinkUrlFinder;
 
 use webignition\AbsoluteUrlDeriver\AbsoluteUrlDeriver;
 use webignition\Uri\Normalizer;
-use webignition\Uri\ScopeComparer;
 use webignition\Uri\Uri;
 use webignition\WebResource\WebPage\WebPage;
 
@@ -12,21 +11,6 @@ class HtmlDocumentLinkUrlFinder
 {
     const HREF_ATTRIBUTE_NAME  = 'href';
     const SRC_ATTRIBUTE_NAME  = 'src';
-
-    /**
-     * @var array
-     */
-    private $elementsWithUrlAttributes = null;
-
-    /**
-     * @var ScopeComparer
-     */
-    private $urlScopeComparer = null;
-
-    /**
-     * @var string
-     */
-    private $baseUrl = null;
 
     /**
      * @var Configuration
@@ -42,19 +26,14 @@ class HtmlDocumentLinkUrlFinder
     {
         $this->elementExcluder = new ElementExcluder();
         $this->configuration = new Configuration();
-        $this->urlScopeComparer = new ScopeComparer();
     }
 
-    public function getLinkCollection(): LinkCollection
+    public function getLinkCollection(WebPage $webPage, string $webPageUrl): LinkCollection
     {
         $links = [];
 
-        if (!$this->configuration->hasSourceContent()) {
-            return new LinkCollection($links);
-        }
-
-        $urls = $this->getAllUrls();
-        $elements = $this->getRawElements();
+        $urls = $this->getAllUrls($webPage, $webPageUrl);
+        $elements = $this->getRawElements($webPage);
 
         foreach ($urls as $index => $url) {
             $links[] = new Link(
@@ -77,26 +56,21 @@ class HtmlDocumentLinkUrlFinder
     }
 
     /**
+     * @param WebPage $webPage
+     * @param string $webPageUrl
+     *
      * @return string[]
      */
-    public function getAllUrls(): array
+    private function getAllUrls(WebPage $webPage, string $webPageUrl): array
     {
-        if ($this->configuration->requiresReset()) {
-            $this->reset();
-        }
-
-        if (!$this->configuration->hasSourceContent()) {
-            return [];
-        }
-
         $urls = [];
-        $elements = $this->getRawElements();
+        $elements = $this->getRawElements($webPage);
 
         if (empty($elements)) {
             return [];
         }
 
-        $baseUri = new Uri($this->getBaseUrl());
+        $baseUri = new Uri($this->getBaseUrl($webPage, $webPageUrl));
 
         foreach ($elements as $element) {
             $uri = AbsoluteUrlDeriver::derive(
@@ -112,15 +86,9 @@ class HtmlDocumentLinkUrlFinder
         return $urls;
     }
 
-    private function reset()
+    private function getRawElements(WebPage $webPage): array
     {
-        $this->elementsWithUrlAttributes = null;
-        $this->configuration->clearReset();
-    }
-
-    private function getRawElements(): array
-    {
-        $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes();
+        $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes($webPage);
         $elements = [];
 
         if (empty($elementsWithUrlAttributes)) {
@@ -143,16 +111,12 @@ class HtmlDocumentLinkUrlFinder
         return $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
     }
 
-    private function getElementsWithUrlAttributes(): array
+    private function getElementsWithUrlAttributes(WebPage $webPage): array
     {
-        if (empty($this->elementsWithUrlAttributes)) {
-            $elements = $this->findElementsWithUrlAttributes();
-            $filteredElements = $this->filterElements($elements);
+        $elements = $webPage->getInspector()->querySelectorAll('[href], [src]');
+        $filteredElements = $this->filterElements($elements);
 
-            $this->elementsWithUrlAttributes = $filteredElements;
-        }
-
-        return $this->elementsWithUrlAttributes;
+        return $filteredElements;
     }
 
     /**
@@ -174,16 +138,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $filteredElements;
-    }
-
-    private function findElementsWithUrlAttributes(): array
-    {
-        /* @var WebPage $webPage */
-        $webPage = $this->configuration->getSource();
-
-        $inspector = $webPage->getInspector();
-
-        return $inspector->querySelectorAll('[href], [src]');
     }
 
     private function hasUrlAttribute(\DOMElement $element): bool
@@ -237,17 +191,12 @@ class HtmlDocumentLinkUrlFinder
         return preg_match($pattern, $url) > 0;
     }
 
-    private function getBaseUrl(): string
+    private function getBaseUrl(WebPage $webPage, string $webPageUrl): string
     {
-        if (is_null($this->baseUrl)) {
-            /* @var WebPage $webPage */
-            $webPage = $this->configuration->getSource();
+        $webPageBaseUrl = $webPage->getBaseUrl();
 
-            $webPageBaseUrl = $webPage->getBaseUrl();
-
-            $this->baseUrl = (empty($webPageBaseUrl)) ? $this->configuration->getSourceUrl() : $webPageBaseUrl;
-        }
-
-        return $this->baseUrl;
+        return (empty($webPageBaseUrl))
+            ? $webPageUrl
+            : $webPageBaseUrl;
     }
 }
