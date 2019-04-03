@@ -65,7 +65,11 @@ class HtmlDocumentLinkUrlFinder
         $uris = [];
 
         foreach ($elements as $element) {
-            $uri = AbsoluteUrlDeriver::derive($baseUri, new Uri($this->getUrlValueFromElement($element)));
+            $elementUrlValue = $element->hasAttribute(self::HREF_ATTRIBUTE_NAME)
+                ? $element->getAttribute(self::HREF_ATTRIBUTE_NAME)
+                : $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
+
+            $uri = AbsoluteUrlDeriver::derive($baseUri, new Uri($elementUrlValue));
             $uri = Normalizer::normalize($uri);
 
             $uris[] = $uri;
@@ -88,15 +92,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $elements;
-    }
-
-    private function getUrlValueFromElement(\DOMElement $element): string
-    {
-        if ($element->hasAttribute(self::HREF_ATTRIBUTE_NAME)) {
-            return $element->getAttribute(self::HREF_ATTRIBUTE_NAME);
-        }
-
-        return $element->getAttribute(self::SRC_ATTRIBUTE_NAME);
     }
 
     private function getElementsWithUrlAttributes(WebPage $webPage): array
