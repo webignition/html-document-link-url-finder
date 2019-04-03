@@ -14,11 +14,6 @@ class HtmlDocumentLinkUrlFinder
     const SRC_ATTRIBUTE_NAME  = 'src';
 
     /**
-     * @var Configuration
-     */
-    private $configuration = null;
-
-    /**
      * @var ElementExcluder
      */
     private $elementExcluder;
@@ -26,7 +21,6 @@ class HtmlDocumentLinkUrlFinder
     public function __construct()
     {
         $this->elementExcluder = new ElementExcluder();
-        $this->configuration = new Configuration();
     }
 
     public function getLinkCollection(WebPage $webPage, string $webPageUrl): LinkCollection
@@ -42,16 +36,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return new LinkCollection($links);
-    }
-
-    public function setConfiguration(Configuration $configuration)
-    {
-        $this->configuration = $configuration;
-    }
-
-    public function getConfiguration(): Configuration
-    {
-        return $this->configuration;
     }
 
     /**

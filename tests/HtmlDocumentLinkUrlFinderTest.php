@@ -243,11 +243,6 @@ class HtmlDocumentLinkUrlFinderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetConfiguration()
-    {
-        $this->assertInstanceOf(Configuration::class, $this->htmlDocumentLinkUrlFinder->getConfiguration());
-    }
-
     /**
      * @param string $content
      * @param string $characterSet
