@@ -33,19 +33,17 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @param array $configurationValues
      * @param string $expectedSource
      * @param string $expectedSourceUrl
-     * @param bool $expectedIgnoreFragmentInUrlComparison
      */
     public function testCreate(
         array $configurationValues,
         string $expectedSource,
-        string $expectedSourceUrl,
-        bool $expectedIgnoreFragmentInUrlComparison
+        string $expectedSourceUrl
     ) {
         $configuration = new Configuration($configurationValues);
 
         $this->assertEquals($expectedSource, $configuration->getSource());
         $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
-        $this->assertEquals($expectedIgnoreFragmentInUrlComparison, $configuration->getIgnoreFragmentInUrlComparison());
+;
     }
 
     public function createDataProvider(): array
@@ -57,17 +55,14 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'configurationValues' => [],
                 'expectedSource' => '',
                 'expectedSourceUrl' => '',
-                'expectedIgnoreFragmentInUrlComparison' => false,
             ],
             'non-default' => [
                 'configurationValues' => [
                     Configuration::CONFIG_KEY_SOURCE => $webPage,
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                    Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
                 ],
                 'expectedSource' => $webPage,
                 'expectedSourceUrl' => 'http://example.com/',
-                'expectedIgnoreFragmentInUrlComparison' => true,
             ],
         ];
     }
@@ -188,14 +183,5 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'expectedHasSourceContent' => true,
             ],
         ];
-    }
-
-    public function testIgnoreFragmentInUrlComparison()
-    {
-        $this->configuration->setIgnoreFragmentInUrlComparison(false);
-        $this->assertFalse($this->configuration->getIgnoreFragmentInUrlComparison());
-
-        $this->configuration->setIgnoreFragmentInUrlComparison(true);
-        $this->assertTrue($this->configuration->getIgnoreFragmentInUrlComparison());
     }
 }
