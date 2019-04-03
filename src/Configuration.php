@@ -29,11 +29,6 @@ class Configuration
     private $sourceUrl = null;
 
     /**
-     * @var bool
-     */
-    private $ignoreFragmentInUrlComparison = false;
-
-    /**
      * @param array $configurationValues
      */
     public function __construct(array $configurationValues = [])
