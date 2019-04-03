@@ -23,4 +23,15 @@ class LinkTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($element, $link->getElement());
         $this->assertEquals($elementSource, $link->getElementAsString());
     }
+
+    public function testCreateNoOwnerDocument()
+    {
+        $element = new \DOMElement('name', 'value', 'uri');
+        $uri = new Uri('http://example.com/');
+
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('element must have an ownerDocument');
+
+        new Link($uri, $element);
+    }
 }
