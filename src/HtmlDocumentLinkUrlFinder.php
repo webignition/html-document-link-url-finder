@@ -34,7 +34,9 @@ class HtmlDocumentLinkUrlFinder
         $links = [];
 
         $baseUri = $this->getBaseUri($webPage, $webPageUrl);
-        $elements = $this->findElements($webPage);
+        $elements = $this->filterElements(
+            $webPage->getInspector()->querySelectorAll('[href], [src]')
+        );
         $uris = $this->getUrisFromElements($elements, $baseUri);
 
         foreach ($uris as $index => $uri) {
@@ -76,30 +78,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $uris;
-    }
-
-    private function findElements(WebPage $webPage): array
-    {
-        $elementsWithUrlAttributes = $this->getElementsWithUrlAttributes($webPage);
-        $elements = [];
-
-        if (empty($elementsWithUrlAttributes)) {
-            return [];
-        }
-
-        foreach ($elementsWithUrlAttributes as $element) {
-            $elements[] = $element;
-        }
-
-        return $elements;
-    }
-
-    private function getElementsWithUrlAttributes(WebPage $webPage): array
-    {
-        $elements = $webPage->getInspector()->querySelectorAll('[href], [src]');
-        $filteredElements = $this->filterElements($elements);
-
-        return $filteredElements;
     }
 
     /**
