@@ -33,7 +33,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @param array $configurationValues
      * @param string $expectedSource
      * @param string $expectedSourceUrl
-     * @param array $expectedElementScope
      * @param string $expectedAttributeScopeName
      * @param string $expectedAttributeScopeValue
      * @param bool $expectedIgnoreFragmentInUrlComparison
@@ -42,7 +41,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
         array $configurationValues,
         string $expectedSource,
         string $expectedSourceUrl,
-        array $expectedElementScope,
         ?string $expectedAttributeScopeName,
         ?string $expectedAttributeScopeValue,
         bool $expectedIgnoreFragmentInUrlComparison
@@ -51,7 +49,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($expectedSource, $configuration->getSource());
         $this->assertEquals($expectedSourceUrl, $configuration->getSourceUrl());
-        $this->assertEquals($expectedElementScope, $configuration->getElementScope());
         $this->assertEquals($expectedAttributeScopeName, $configuration->getAttributeScopeName());
         $this->assertEquals($expectedAttributeScopeValue, $configuration->getAttributeScopeValue());
         $this->assertEquals($expectedIgnoreFragmentInUrlComparison, $configuration->getIgnoreFragmentInUrlComparison());
@@ -66,7 +63,6 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'configurationValues' => [],
                 'expectedSource' => '',
                 'expectedSourceUrl' => '',
-                'expectedElementScope' => [],
                 'expectedAttributeScopeName' => null,
                 'expectedAttributeScopeValue' => null,
                 'expectedIgnoreFragmentInUrlComparison' => false,
@@ -75,73 +71,15 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
                 'configurationValues' => [
                     Configuration::CONFIG_KEY_SOURCE => $webPage,
                     Configuration::CONFIG_KEY_SOURCE_URL => 'http://example.com/',
-                    Configuration::CONFIG_KEY_ELEMENT_SCOPE => 'a',
                     Configuration::CONFIG_KEY_IGNORE_FRAGMENT_IN_URL_COMPARISON => true,
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME => 'name',
                     Configuration::CONFIG_KEY_ATTRIBUTE_SCOPE_VALUE => 'value',
                 ],
                 'expectedSource' => $webPage,
                 'expectedSourceUrl' => 'http://example.com/',
-                'expectedElementScope' => [
-                    'a',
-                ],
                 'expectedAttributeScopeName' => 'name',
                 'expectedAttributeScopeValue' => 'value',
                 'expectedIgnoreFragmentInUrlComparison' => true,
-            ],
-        ];
-    }
-
-    /**
-     * @dataProvider elementScopeDataProvider
-     *
-     * @param string|array $scope
-     * @param array $expectedScope
-     */
-    public function testElementScope($scope, array $expectedScope)
-    {
-        $this->assertFalse($this->configuration->requiresReset());
-
-        $this->configuration->setElementScope($scope);
-        $this->assertEquals($expectedScope, $this->configuration->getElementScope());
-
-        $this->assertTrue($this->configuration->requiresReset());
-    }
-
-    public function elementScopeDataProvider(): array
-    {
-        return [
-            'a' => [
-                'scope' => 'a',
-                'expectedScope' => [
-                    'a'
-                ],
-            ],
-            'link' => [
-                'scope' => 'link',
-                'expectedScope' => [
-                    'link'
-                ],
-            ],
-            'a, link' => [
-                'scope' => [
-                    'a',
-                    'link',
-                ],
-                'expectedScope' => [
-                    'a',
-                    'link',
-                ],
-            ],
-            'A, LINK' => [
-                'scope' => [
-                    'A',
-                    'LINK',
-                ],
-                'expectedScope' => [
-                    'a',
-                    'link',
-                ],
             ],
         ];
     }
@@ -271,16 +209,5 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
         $this->configuration->setIgnoreFragmentInUrlComparison(true);
         $this->assertTrue($this->configuration->getIgnoreFragmentInUrlComparison());
-    }
-
-    public function testClearReset()
-    {
-        $this->assertFalse($this->configuration->requiresReset());
-
-        $this->configuration->setElementScope('foo');
-        $this->assertTrue($this->configuration->requiresReset());
-
-        $this->configuration->clearReset();
-        $this->assertFalse($this->configuration->requiresReset());
     }
 }

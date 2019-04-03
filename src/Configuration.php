@@ -32,11 +32,6 @@ class Configuration
     private $sourceUrl = null;
 
     /**
-     * @var array
-     */
-    private $elementScope = [];
-
-    /**
      * @var string
      */
     private $attributeScopeName = null;
@@ -62,10 +57,6 @@ class Configuration
 
         if (isset($configurationValues[self::CONFIG_KEY_SOURCE_URL])) {
             $this->setSourceUrl($configurationValues[self::CONFIG_KEY_SOURCE_URL]);
-        }
-
-        if (isset($configurationValues[self::CONFIG_KEY_ELEMENT_SCOPE])) {
-            $this->setElementScope($configurationValues[self::CONFIG_KEY_ELEMENT_SCOPE]);
         }
 
         $hasAttributeScopeName = isset($configurationValues[self::CONFIG_KEY_ATTRIBUTE_SCOPE_NAME]);
@@ -140,33 +131,6 @@ class Configuration
     public function clearReset()
     {
         $this->requiresReset = false;
-    }
-
-    /**
-     * @param string|array $scope
-     */
-    public function setElementScope($scope)
-    {
-        if (is_string($scope)) {
-            $this->elementScope = array($scope);
-        }
-
-        if (is_array($scope)) {
-            $this->elementScope = $scope;
-        }
-
-        if (is_array($this->elementScope)) {
-            foreach ($this->elementScope as $index => $nodeName) {
-                $this->elementScope[$index] = strtolower($nodeName);
-            }
-        }
-
-        $this->requiresReset = true;
-    }
-
-    public function getElementScope(): array
-    {
-        return $this->elementScope;
     }
 
     public function setSourceUrl(string $sourceUrl)
