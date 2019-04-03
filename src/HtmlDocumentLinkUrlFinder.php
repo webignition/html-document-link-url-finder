@@ -165,8 +165,7 @@ class HtmlDocumentLinkUrlFinder
         $filteredElements = [];
 
         foreach ($elements as $element) {
-            $includeElement = $this->isElementInNameScope($element);
-            $includeElement = $includeElement && !$this->elementExcluder->isExcluded($element);
+            $includeElement = !$this->elementExcluder->isExcluded($element);
             $includeElement = $includeElement && $this->hasUrlAttribute($element);
             $includeElement = $includeElement && $this->isElementInAttributeScope($element);
 
@@ -176,26 +175,6 @@ class HtmlDocumentLinkUrlFinder
         }
 
         return $filteredElements;
-    }
-
-    private function isElementInNameScope(\DOMElement $element): bool
-    {
-        $elementScope = $this->configuration->getElementScope();
-
-        if (empty($elementScope)) {
-            return true;
-        }
-
-        $isInScope = false;
-
-        foreach ($elementScope as $nodeName) {
-            /* @var \DOMElement $element */
-            if ($element->nodeName === $nodeName) {
-                $isInScope = true;
-            }
-        }
-
-        return $isInScope;
     }
 
     private function isElementInAttributeScope(\DOMElement $element): bool
